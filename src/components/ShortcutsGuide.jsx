@@ -19,6 +19,7 @@ export const ShortcutsGuide = ({ isOpen, onClose }) => {
     { key: '⌘/Ctrl + O', description: 'Show/Hide answer' },
     { key: '⌘/Ctrl + H', description: 'Show history' },
     { key: '⌘/Ctrl + L', description: 'Listen to pronunciation' },
+    { key: '⌘/Ctrl + U', description: 'Toggle Random Mode' },
     { key: 'Enter', description: 'Check answer' },
     { key: 'Esc', description: 'Close modals' }
   ]

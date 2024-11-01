@@ -331,7 +331,8 @@ export default function HomeComponent() {
     prevWord,
     setShowCorrectWord,
     speakWord,
-    currentWord
+    currentWord,
+    setIsRandomMode
   })
 
   const handleWordSetSelect = (wordSet) => {
@@ -521,7 +522,6 @@ export default function HomeComponent() {
                     {/* Add Shuffle Toggle Button */}
                     <Button
                       size="sm"
-                      bg="gray.700"
                       _hover={{ bg: "gray.600" }}
                       color={isRandomMode ? "yellow.400" : "gray.500"}
                       onClick={() => setIsRandomMode(prev => !prev)}

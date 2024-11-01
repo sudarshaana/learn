@@ -7,7 +7,8 @@ export const useKeyboardShortcuts = ({
   prevWord,
   setShowCorrectWord,
   speakWord,
-  currentWord
+  currentWord,
+  setIsRandomMode
 }) => {
   useEffect(() => {
     const handleKeyboardShortcuts = (e) => {
@@ -50,9 +51,14 @@ export const useKeyboardShortcuts = ({
         e.preventDefault()
         prevWord()
       }
+      // Toggle Random Mode - Cmd/Ctrl + U
+      if (isModifierKey && e.key === 'u') {
+        e.preventDefault()
+        setIsRandomMode(prev => !prev)
+      }
     }
 
     window.addEventListener('keydown', handleKeyboardShortcuts)
     return () => window.removeEventListener('keydown', handleKeyboardShortcuts)
-  }, [showHistory, currentWord, nextWord, prevWord, setShowCorrectWord, setShowHistory, speakWord])
+  }, [showHistory, currentWord, nextWord, prevWord, setShowCorrectWord, setShowHistory, speakWord, setIsRandomMode])
 }
