@@ -161,6 +161,13 @@ export default function HomeComponent() {
 
   useEffect(() => {
     const handleKeyboardShortcuts = (e) => {
+      // Close history window with ESC key
+      if (e.key === 'Escape' && showHistory) {
+        e.preventDefault()
+        setShowHistory(false)
+        return
+      }
+
       const isModifierKey = e.metaKey || e.ctrlKey
 
       // Skip (Next Word) - Cmd/Ctrl + S or Space
@@ -187,7 +194,7 @@ export default function HomeComponent() {
 
     window.addEventListener('keydown', handleKeyboardShortcuts)
     return () => window.removeEventListener('keydown', handleKeyboardShortcuts)
-  }, [])
+  }, [showHistory])
 
   return (
     <ChakraProvider theme={theme}>
