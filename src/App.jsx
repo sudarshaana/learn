@@ -430,8 +430,9 @@ export default function HomeComponent() {
                   {/* Show Answer Button */}
                   <Button
                     size="sm"
+                    // bg="gray.700"
                     _hover={{ bg: "gray.600" }}
-                    color="gray.100"
+                    color={showCorrectWord ? "red.400" : "green.500"}
                     onClick={() => setShowCorrectWord(!showCorrectWord)}
                     title="Show/Hide Answer (Mac: ⌘ + O | Win: Ctrl + O)"
                     aria-label="Show/Hide Answer"
@@ -446,8 +447,9 @@ export default function HomeComponent() {
                   {/* History Button */}
                   <Button
                     size="sm"
+                    // bg="gray.700"
                     _hover={{ bg: "gray.600" }}
-                    color="gray.100"
+                    color="purple.500"
                     onClick={() => setShowHistory(!showHistory)}
                     title="History (Mac: ⌘ + H | Win: Ctrl + H)"
                     aria-label="View History"
@@ -459,11 +461,29 @@ export default function HomeComponent() {
                     <History size={16} />
                   </Button>
 
+                  {/* Stats Button */}
+                  <Button
+                    size="sm"
+                    // bg="gray.700"
+                    _hover={{ bg: "gray.600" }}
+                    color="blue.500"
+                    onClick={() => setShowStats(true)}
+                    title="View Statistics"
+                    aria-label="View Statistics"
+                    width="full"
+                    height="40px"
+                    padding={0}
+                    flex={1}
+                  >
+                    <BarChart2 size={16} />
+                  </Button>
+
                   {/* Words Button */}
                   <Button
                     size="sm"
+                    // bg="gray.700"
                     _hover={{ bg: "gray.600" }}
-                    color="gray.100"
+                    color="teal.500"
                     onClick={() => setShowWordSets(true)}
                     title="Select Word Set"
                     aria-label="Select Word Set"
@@ -478,8 +498,9 @@ export default function HomeComponent() {
                   {/* Shortcuts Button */}
                   <Button
                     size="sm"
+                    // bg="gray.700"
                     _hover={{ bg: "gray.600" }}
-                    color="gray.100"
+                    color="gray.500"
                     onClick={() => setShowShortcuts(true)}
                     title="Keyboard Shortcuts"
                     aria-label="Show Keyboard Shortcuts"
@@ -489,22 +510,6 @@ export default function HomeComponent() {
                     flex={1}
                   >
                     <HelpCircle size={16} />
-                  </Button>
-
-                  <Button
-                    size="sm"
-                    bg="gray.700"
-                    _hover={{ bg: "gray.600" }}
-                    color="gray.100"
-                    onClick={() => setShowStats(true)}
-                    title="View Statistics"
-                    aria-label="View Statistics"
-                    width="full"
-                    height="40px"
-                    padding={0}
-                    flex={1}
-                  >
-                    <BarChart2 size={16} />
                   </Button>
 
                 </Flex>
