@@ -22,7 +22,6 @@ export const ButtonControls = ({
             <Flex width="full" gap={2} mt={2}>
                 <Button
                     onClick={onPrev}
-
                     _hover={{ bg: "green.600" }}
                     color="gray.100"
                     title="Mac: ⌘ + P | Win: Ctrl + P"

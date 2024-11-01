@@ -294,7 +294,7 @@ export default function HomeComponent() {
         display="flex"
         alignItems="center"
         justifyContent="center"
-        p={{ base: 0, md: 4 }}  // Remove padding on mobile
+        p={{ base: 0, md: 4 }}
       >
         {isLoading ? (
           <Flex direction="column" align="center" gap={4}>
@@ -304,20 +304,20 @@ export default function HomeComponent() {
         ) : (
           <Box
             width="full"
-            maxWidth={{ base: "100%", md: "md" }}
+            maxWidth={{ base: "100%", md: "500px" }}
             mx="auto"
             position="relative"
-            height={{ base: "100vh", md: "auto" }}  // Full height on mobile
+            height={{ base: "100vh", md: "auto" }}
           >
             <Box
               p={{ base: 4, md: 6 }}
               bgGradient={bgGradient}
-              borderRadius={{ base: 0, md: "lg" }}  // No border radius on mobile
-              boxShadow={{ base: "none", md: "dark-lg" }}  // No shadow on mobile
-              borderWidth={{ base: 0, md: 1 }}  // No border on mobile
+              borderRadius={{ base: 0, md: "lg" }}
+              boxShadow={{ base: "none", md: "dark-lg" }}
+              borderWidth={{ base: 0, md: 1 }}
               borderColor="gray.700"
               position="relative"
-              height={{ base: "100%", md: "auto" }}  // Full height on mobile
+              height={{ base: "100%", md: "auto" }}
               display="flex"
               flexDirection="column"
             >
@@ -363,67 +363,93 @@ export default function HomeComponent() {
 
               <Flex
                 position={{ base: "relative", md: "absolute" }}
-                bottom={{ base: "auto", md: "-80px" }}
+                bottom={{ base: "auto", md: "-70px" }}
                 left="50%"
                 transform="translateX(-50%)"
-                gap={4}
                 mt={{ base: 4, md: 8 }}
                 mb={{ base: 2, md: 0 }}
-                flexDirection="column"
                 alignItems="center"
-                width={{ base: "full", md: "auto" }}
+                width={{ base: "full", md: "100%" }}
+                maxWidth={{ base: "full", md: "500px" }}
                 zIndex={2}
+                bg="whiteAlpha.50"
+                borderRadius="lg"
+                p={2}
               >
-                <Flex gap={2} justifyContent="center">
+                <Flex
+                  gap={2}
+                  justifyContent="center"
+                  width="full"
+                >
+                  {/* Show Answer Button */}
                   <Button
                     size="sm"
-                    bg="gray.700"
+                    // bg="gray.700"
                     _hover={{ bg: "gray.600" }}
                     color="gray.100"
                     onClick={() => setShowCorrectWord(!showCorrectWord)}
-                    leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
-                    title="Mac: ⌘ + O | Win: Ctrl + O"
+                    title="Show/Hide Answer (Mac: ⌘ + O | Win: Ctrl + O)"
+                    aria-label="Show/Hide Answer"
+                    width="full"
+                    height="40px"
+                    padding={0}
+                    flex={1}
                   >
-                    {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
+                    {showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
                   </Button>
 
+                  {/* History Button */}
                   <Button
                     size="sm"
-                    bg="gray.700"
+                    // bg="gray.700"
                     _hover={{ bg: "gray.600" }}
                     color="gray.100"
                     onClick={() => setShowHistory(!showHistory)}
-                    leftIcon={<History size={16} />}
-                    title="Mac: ⌘ + H | Win: Ctrl + H"
+                    title="History (Mac: ⌘ + H | Win: Ctrl + H)"
+                    aria-label="View History"
+                    width="full"
+                    height="40px"
+                    padding={0}
+                    flex={1}
                   >
-                    History
-                  </Button>
-                </Flex>
-
-                <Flex gap={2} justifyContent="center">
-                  <Button
-                    size="sm"
-                    bg="gray.700"
-                    _hover={{ bg: "gray.600" }}
-                    color="gray.100"
-                    onClick={() => setShowShortcuts(true)}
-                    leftIcon={<HelpCircle size={16} />}
-                    title="Show keyboard shortcuts"
-                  >
-                    Shortcuts
+                    <History size={16} />
                   </Button>
 
+                  {/* Words Button */}
                   <Button
                     size="sm"
-                    bg="gray.700"
+                    // bg="gray.700"
                     _hover={{ bg: "gray.600" }}
                     color="gray.100"
                     onClick={() => setShowWordSets(true)}
-                    leftIcon={<Book size={16} />}
-                    title="Select word set"
+                    title="Select Word Set"
+                    aria-label="Select Word Set"
+                    width="full"
+                    height="40px"
+                    padding={0}
+                    flex={1}
                   >
-                    Words
+                    <Book size={16} />
                   </Button>
+
+                  {/* Shortcuts Button */}
+                  <Button
+                    size="sm"
+                    // bg="gray.700"
+                    _hover={{ bg: "gray.600" }}
+                    color="gray.100"
+                    onClick={() => setShowShortcuts(true)}
+                    title="Keyboard Shortcuts"
+                    aria-label="Show Keyboard Shortcuts"
+                    width="full"
+                    height="40px"
+                    padding={0}
+                    flex={1}
+                  >
+                    <HelpCircle size={16} />
+                  </Button>
+
+
                 </Flex>
               </Flex>
 
