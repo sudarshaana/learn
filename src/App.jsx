@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Eye, EyeOff, History, Volume2, HelpCircle } from "lucide-react"
+import { Eye, EyeOff, History, Volume2, HelpCircle, Book } from "lucide-react"
 import {
   ChakraProvider,
   Box,
@@ -14,8 +14,8 @@ import {
   useToast,
   useColorMode
 } from "@chakra-ui/react"
+import Papa from 'papaparse'
 
-import { wordsPromise } from "./data/words.js"
 import { WordDisplay } from './components/WordDisplay'
 import { InputSection } from './components/InputSection'
 import { ButtonControls } from './components/ButtonControls'
@@ -28,6 +28,8 @@ import { ProgressBar } from './components/ProgressBar'
 import { StreakCounter } from './components/StreakCounter'
 import { ShortcutsGuide } from './components/ShortcutsGuide'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
+import { WordSetSelector } from './components/WordSetSelector'
+import { wordSets } from './data/wordSets'
 
 export default function HomeComponent() {
   const { colorMode } = useColorMode()
@@ -76,22 +78,46 @@ export default function HomeComponent() {
 
   const [showShortcuts, setShowShortcuts] = useState(false)
 
+  const [showWordSets, setShowWordSets] = useState(() => {
+    const hasVisited = localStorage.getItem('hasVisitedBefore')
+    return !hasVisited // Show word sets if never visited
+  })
+
+  const [currentWordSet, setCurrentWordSet] = useState(() => {
+    const saved = localStorage.getItem('currentWordSet')
+    return saved ? JSON.parse(saved) : null // Set to null initially
+  })
+
   useEffect(() => {
     localStorage.setItem('currentWordIndex', currentWordIndex.toString())
   }, [currentWordIndex])
 
   useEffect(() => {
-    wordsPromise.then(loadedWords => {
-      setWords(loadedWords)
-      setIsLoading(false)
-      const saved = localStorage.getItem('currentWordIndex')
-      if (saved && parseInt(saved, 10) >= loadedWords.length) {
-        setCurrentWordIndex(0)
-      }
-    }).catch(error => {
-      console.error('Error loading words:', error)
-    })
-  }, [])
+    if (!currentWordSet) return // Don't load words if no set is selected
+
+    setIsLoading(true)
+    fetch(currentWordSet.url)
+      .then(response => response.text())
+      .then(csvText => {
+        const { data } = Papa.parse(csvText, {
+          skipEmptyLines: true
+        })
+
+        const loadedWords = data
+          .filter(row => row[0] && row[1])
+          .map(row => ({
+            correct: row[0].trim(),
+            incorrect: row[1].trim()
+          }))
+
+        setWords(loadedWords)
+        setIsLoading(false)
+      })
+      .catch(error => {
+        console.error('Error loading words:', error)
+        setIsLoading(false)
+      })
+  }, [currentWordSet])
 
   useEffect(() => {
     localStorage.setItem('correctCount', correctCount.toString())
@@ -231,6 +257,36 @@ export default function HomeComponent() {
     currentWord
   })
 
+  const handleWordSetSelect = (wordSet) => {
+    setCurrentWordSet(wordSet)
+    localStorage.setItem('currentWordSet', JSON.stringify(wordSet))
+    localStorage.setItem('hasVisitedBefore', 'true') // Mark as visited
+    setShowWordSets(false)
+    handleReset()
+  }
+
+  // Show loading state or word set selector if no set is selected
+  if (!currentWordSet || (showWordSets && !localStorage.getItem('hasVisitedBefore'))) {
+    return (
+      <ChakraProvider theme={theme}>
+        <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center">
+          <WordSetSelector
+            isOpen={true}
+            onClose={() => {
+              // Only allow closing if not first visit
+              if (localStorage.getItem('hasVisitedBefore')) {
+                setShowWordSets(false)
+              }
+            }}
+            onSelect={handleWordSetSelect}
+            currentSetId={currentWordSet?.id}
+            hideCloseButton={!localStorage.getItem('hasVisitedBefore')}
+          />
+        </Box>
+      </ChakraProvider>
+    )
+  }
+
   return (
     <ChakraProvider theme={theme}>
       <Box
@@ -310,49 +366,65 @@ export default function HomeComponent() {
                 bottom={{ base: "auto", md: "-80px" }}
                 left="50%"
                 transform="translateX(-50%)"
-                gap={2}
+                gap={4}
                 mt={{ base: 4, md: 8 }}
                 mb={{ base: 2, md: 0 }}
-                flexWrap="wrap"
-                justifyContent="center"
+                flexDirection="column"
+                alignItems="center"
                 width={{ base: "full", md: "auto" }}
                 zIndex={2}
               >
-                <Button
-                  size="sm"
-                  bg="gray.700"
-                  _hover={{ bg: "gray.600" }}
-                  color="gray.100"
-                  onClick={() => setShowCorrectWord(!showCorrectWord)}
-                  leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
-                  title="Mac: ⌘ + O | Win: Ctrl + O"
-                >
-                  {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
-                </Button>
+                <Flex gap={2} justifyContent="center">
+                  <Button
+                    size="sm"
+                    bg="gray.700"
+                    _hover={{ bg: "gray.600" }}
+                    color="gray.100"
+                    onClick={() => setShowCorrectWord(!showCorrectWord)}
+                    leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
+                    title="Mac: ⌘ + O | Win: Ctrl + O"
+                  >
+                    {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
+                  </Button>
 
-                <Button
-                  size="sm"
-                  bg="gray.700"
-                  _hover={{ bg: "gray.600" }}
-                  color="gray.100"
-                  onClick={() => setShowHistory(!showHistory)}
-                  leftIcon={<History size={16} />}
-                  title="Mac: ⌘ + H | Win: Ctrl + H"
-                >
-                  History
-                </Button>
+                  <Button
+                    size="sm"
+                    bg="gray.700"
+                    _hover={{ bg: "gray.600" }}
+                    color="gray.100"
+                    onClick={() => setShowHistory(!showHistory)}
+                    leftIcon={<History size={16} />}
+                    title="Mac: ⌘ + H | Win: Ctrl + H"
+                  >
+                    History
+                  </Button>
+                </Flex>
 
-                <Button
-                  size="sm"
-                  bg="gray.700"
-                  _hover={{ bg: "gray.600" }}
-                  color="gray.100"
-                  onClick={() => setShowShortcuts(true)}
-                  leftIcon={<HelpCircle size={16} />}
-                  title="Show keyboard shortcuts"
-                >
-                  Shortcuts
-                </Button>
+                <Flex gap={2} justifyContent="center">
+                  <Button
+                    size="sm"
+                    bg="gray.700"
+                    _hover={{ bg: "gray.600" }}
+                    color="gray.100"
+                    onClick={() => setShowShortcuts(true)}
+                    leftIcon={<HelpCircle size={16} />}
+                    title="Show keyboard shortcuts"
+                  >
+                    Shortcuts
+                  </Button>
+
+                  <Button
+                    size="sm"
+                    bg="gray.700"
+                    _hover={{ bg: "gray.600" }}
+                    color="gray.100"
+                    onClick={() => setShowWordSets(true)}
+                    leftIcon={<Book size={16} />}
+                    title="Select word set"
+                  >
+                    Words
+                  </Button>
+                </Flex>
               </Flex>
 
               {showCorrectWord && (
@@ -398,6 +470,13 @@ export default function HomeComponent() {
           isOpen={showHistory}
           onClose={() => setShowHistory(false)}
           history={wordHistory}
+        />
+
+        <WordSetSelector
+          isOpen={showWordSets}
+          onClose={() => setShowWordSets(false)}
+          onSelect={handleWordSetSelect}
+          currentSetId={currentWordSet.id}
         />
       </Box>
     </ChakraProvider>
