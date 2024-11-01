@@ -65,7 +65,11 @@ export default function HomeComponent() {
 
   const toast = useToast()
 
-  const [streak, setStreak] = useState(0)
+  const [streak, setStreak] = useState(() => {
+    const saved = localStorage.getItem('streak')
+    return saved ? parseInt(saved, 10) : 0
+  })
+
   const [showShortcuts, setShowShortcuts] = useState(false)
 
   useEffect(() => {
@@ -96,6 +100,10 @@ export default function HomeComponent() {
   useEffect(() => {
     localStorage.setItem('hasCountedIncorrect', hasCountedIncorrect.toString())
   }, [hasCountedIncorrect])
+
+  useEffect(() => {
+    localStorage.setItem('streak', streak.toString())
+  }, [streak])
 
   const currentWord = words.length > 0 ? words[currentWordIndex] : { correct: '', incorrect: '' }
 
@@ -180,12 +188,14 @@ export default function HomeComponent() {
     setIncorrectCount(0)
     setHasCountedIncorrect(false)
     setWordHistory([])
+    setStreak(0)
 
     localStorage.removeItem('currentWordIndex')
     localStorage.removeItem('correctCount')
     localStorage.removeItem('incorrectCount')
     localStorage.removeItem('hasCountedIncorrect')
     localStorage.removeItem('wordHistory')
+    localStorage.removeItem('streak')
 
     setRandomGradient(getRandomGradient(colorMode))
   }
