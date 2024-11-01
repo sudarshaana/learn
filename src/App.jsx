@@ -80,12 +80,18 @@ export default function HomeComponent() {
 
   const [showWordSets, setShowWordSets] = useState(() => {
     const hasVisited = localStorage.getItem('hasVisitedBefore')
-    return !hasVisited // Show word sets if never visited
+    return !hasVisited && wordSets.length > 1
   })
 
   const [currentWordSet, setCurrentWordSet] = useState(() => {
     const saved = localStorage.getItem('currentWordSet')
-    return saved ? JSON.parse(saved) : null // Set to null initially
+    if (wordSets.length === 1) {
+      const onlySet = wordSets[0]
+      localStorage.setItem('currentWordSet', JSON.stringify(onlySet))
+      localStorage.setItem('hasVisitedBefore', 'true')
+      return onlySet
+    }
+    return saved ? JSON.parse(saved) : null
   })
 
   useEffect(() => {
@@ -265,15 +271,29 @@ export default function HomeComponent() {
     handleReset()
   }
 
-  // Show loading state or word set selector if no set is selected
+  // Show loading state or word set selector if needed
   if (!currentWordSet || (showWordSets && !localStorage.getItem('hasVisitedBefore'))) {
+    // If there's only one word set, don't show selector
+    if (wordSets.length === 1) {
+      return (
+        <ChakraProvider theme={theme}>
+          <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center">
+            <Flex direction="column" align="center" gap={4}>
+              <Spinner size="xl" color="blue.400" />
+              <Text color="gray.400">Loading words...</Text>
+            </Flex>
+          </Box>
+        </ChakraProvider>
+      )
+    }
+
+    // Show selector if there are multiple word sets
     return (
       <ChakraProvider theme={theme}>
         <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center">
           <WordSetSelector
             isOpen={true}
             onClose={() => {
-              // Only allow closing if not first visit
               if (localStorage.getItem('hasVisitedBefore')) {
                 setShowWordSets(false)
               }
@@ -384,7 +404,6 @@ export default function HomeComponent() {
                   {/* Show Answer Button */}
                   <Button
                     size="sm"
-                    // bg="gray.700"
                     _hover={{ bg: "gray.600" }}
                     color="gray.100"
                     onClick={() => setShowCorrectWord(!showCorrectWord)}
@@ -401,7 +420,6 @@ export default function HomeComponent() {
                   {/* History Button */}
                   <Button
                     size="sm"
-                    // bg="gray.700"
                     _hover={{ bg: "gray.600" }}
                     color="gray.100"
                     onClick={() => setShowHistory(!showHistory)}
@@ -418,7 +436,6 @@ export default function HomeComponent() {
                   {/* Words Button */}
                   <Button
                     size="sm"
-                    // bg="gray.700"
                     _hover={{ bg: "gray.600" }}
                     color="gray.100"
                     onClick={() => setShowWordSets(true)}
@@ -435,7 +452,6 @@ export default function HomeComponent() {
                   {/* Shortcuts Button */}
                   <Button
                     size="sm"
-                    // bg="gray.700"
                     _hover={{ bg: "gray.600" }}
                     color="gray.100"
                     onClick={() => setShowShortcuts(true)}
