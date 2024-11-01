@@ -25,7 +25,7 @@ const darkGradientPalettes = [
   ["purple.800", "purple.900", "gray.900"],
   ["pink.800", "purple.900", "gray.900"],
   ["violet.800", "purple.900", "gray.900"],
-  ["orange.800", "red.900", "gray.900"],
+  // ["orange.800", "red.900", "gray.900"],
   ["yellow.800", "orange.900", "gray.900"],
   ["teal.800", "cyan.900", "gray.900"],
   ["cyan.800", "teal.900", "gray.900"],
@@ -299,11 +299,11 @@ export default function HomeComponent() {
             </Flex>
             <Flex width="full" position="relative" alignItems="center" gap={4}>
               <Input
-                placeholder="Type the correct pronunciation"
+                placeholder="Type the correct spelling"
                 value={userInput}
                 onChange={handleInputChange}
                 onKeyDown={handleKeyDown}
-                aria-label="Enter correct pronunciation"
+                aria-label="Enter correct spelling"
                 bg="gray.800"
                 mb={2}
                 borderColor="gray.700"
