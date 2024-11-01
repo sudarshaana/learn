@@ -90,7 +90,7 @@ export default function HomeComponent() {
     setCurrentWordIndex((prevIndex) => (prevIndex + 1) % words.length)
     setUserInput("")
     setIsCorrect(null)
-    setHasCountedIncorrect(false)
+    setHasCountedIncorrect(false) // Reset for the new word
     setRandomGradient(darkGradientPalettes[Math.floor(Math.random() * darkGradientPalettes.length)])
   }
 
@@ -176,6 +176,17 @@ export default function HomeComponent() {
               >
                 <ChevronRight size={16} />
               </Button>
+            </Flex>
+            <Flex width="full" justifyContent="center" gap={8}>
+              <Text color="green.400" fontSize="lg">
+                Correct: {correctCount}
+              </Text>
+              <Text color="red.400" fontSize="lg">
+                Incorrect: {incorrectCount}
+              </Text>
+              <Text color="gray.300" fontSize="md">
+                {currentWordIndex + 1} of {words.length}
+              </Text>
             </Flex>
           </VStack>
         </Box>
