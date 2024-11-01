@@ -25,8 +25,8 @@ export const useKeyboardShortcuts = ({
 
       const isModifierKey = e.metaKey || e.ctrlKey
 
-      // Next Word - Cmd/Ctrl + S
-      if (isModifierKey && e.key === 's') {
+      // Next Word - Cmd/Ctrl + N
+      if (isModifierKey && e.key === 'n') {
         e.preventDefault()
         nextWord()
       }

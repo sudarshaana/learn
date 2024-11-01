@@ -14,7 +14,7 @@ import {
 
 export const ShortcutsGuide = ({ isOpen, onClose }) => {
   const shortcuts = [
-    { key: '⌘/Ctrl + S', description: 'Next word' },
+    { key: '⌘/Ctrl + N', description: 'Next word' },
     { key: '⌘/Ctrl + P', description: 'Previous word' },
     { key: '⌘/Ctrl + O', description: 'Show/Hide answer' },
     { key: '⌘/Ctrl + H', description: 'Show history' },

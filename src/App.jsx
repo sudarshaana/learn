@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Eye, EyeOff, History, Volume2, HelpCircle, Book, BarChart2 } from "lucide-react"
+import { Eye, EyeOff, History, Volume2, HelpCircle, Book, BarChart2, Shuffle } from "lucide-react"
 import {
   ChakraProvider,
   Box,
@@ -104,6 +104,16 @@ export default function HomeComponent() {
 
   const [isEnterPressed, setIsEnterPressed] = useState(false)
 
+  const [isRandomMode, setIsRandomMode] = useState(() => {
+    const saved = localStorage.getItem('isRandomMode')
+    return saved === 'true'
+  })
+
+  const [shuffledIndices, setShuffledIndices] = useState([])
+
+  // Add state to track used indices in shuffle mode
+  const [usedShuffleIndices, setUsedShuffleIndices] = useState([])
+
   useEffect(() => {
     localStorage.setItem('currentWordIndex', currentWordIndex.toString())
   }, [currentWordIndex])
@@ -158,7 +168,35 @@ export default function HomeComponent() {
     }
   }, [streak, bestStreak])
 
-  const currentWord = words.length > 0 ? words[currentWordIndex] : { correct: '', incorrect: '' }
+  // Update useEffect for shuffle
+  useEffect(() => {
+    if (words.length > 0 && isRandomMode) {
+      const remainingIndices = Array.from({ length: words.length }, (_, i) => i)
+        .filter(index => !usedShuffleIndices.includes(index))
+
+      if (remainingIndices.length === 0) {
+        // All words have been used, reset tracking
+        setUsedShuffleIndices([])
+        const allIndices = Array.from({ length: words.length }, (_, i) => i)
+        const shuffled = shuffleArray([...allIndices])
+        setShuffledIndices(shuffled)
+      } else {
+        const shuffled = shuffleArray([...remainingIndices])
+        setShuffledIndices(shuffled)
+      }
+    } else {
+      setShuffledIndices([])
+      setUsedShuffleIndices([])
+    }
+  }, [words.length, isRandomMode, usedShuffleIndices.length === words.length])
+
+  useEffect(() => {
+    localStorage.setItem('isRandomMode', isRandomMode.toString())
+  }, [isRandomMode])
+
+  const currentWord = words.length > 0 ?
+    words[isRandomMode ? shuffledIndices[currentWordIndex] || 0 : currentWordIndex] :
+    { correct: '', incorrect: '' }
 
   const checkPronunciation = () => {
     const isAnswerCorrect = userInput.toLowerCase().trim() === currentWord.correct.toLowerCase()
@@ -216,7 +254,12 @@ export default function HomeComponent() {
     }
   }
 
+  // Update nextWord function
   const nextWord = () => {
+    if (isRandomMode) {
+      const currentIndex = shuffledIndices[currentWordIndex]
+      setUsedShuffleIndices(prev => [...prev, currentIndex])
+    }
     setCurrentWordIndex((prevIndex) => (prevIndex + 1) % words.length)
     setUserInput("")
     setIsCorrect(null)
@@ -264,6 +307,13 @@ export default function HomeComponent() {
     setRandomGradient(getRandomGradient(colorMode))
     setCommonMistakes({})
     localStorage.removeItem('commonMistakes')
+
+    setUsedShuffleIndices([])
+    if (isRandomMode) {
+      const indices = Array.from({ length: words.length }, (_, i) => i)
+      const shuffled = shuffleArray([...indices])
+      setShuffledIndices(shuffled)
+    }
   }
 
   useEffect(() => {
@@ -336,6 +386,15 @@ export default function HomeComponent() {
     currentStreak: streak,
     averageAttempts: (correctCount + incorrectCount) / (Object.keys(commonMistakes).length || 1),
     commonMistakes
+  }
+
+  // Add shuffle helper function
+  const shuffleArray = (array) => {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]]
+    }
+    return array
   }
 
   return (
@@ -458,6 +517,24 @@ export default function HomeComponent() {
                     >
                       {showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
                     </Button>
+
+                    {/* Add Shuffle Toggle Button */}
+                    <Button
+                      size="sm"
+                      bg="gray.700"
+                      _hover={{ bg: "gray.600" }}
+                      color={isRandomMode ? "yellow.400" : "gray.500"}
+                      onClick={() => setIsRandomMode(prev => !prev)}
+                      title={isRandomMode ? "Random Mode On" : "Random Mode Off"}
+                      aria-label="Toggle Random Mode"
+                      width="full"
+                      height="40px"
+                      padding={0}
+                      flex={1}
+                    >
+                      <Shuffle size={16} />
+                    </Button>
+
 
                     {/* History Button */}
                     <Button
