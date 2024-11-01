@@ -157,6 +157,38 @@ export default function HomeComponent() {
 
   const bgGradient = `linear(to-br, ${randomGradient[0]}, ${randomGradient[1]}, ${randomGradient[2]})`
 
+  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+
+  useEffect(() => {
+    const handleKeyboardShortcuts = (e) => {
+      const isModifierKey = e.metaKey || e.ctrlKey
+
+      // Skip (Next Word) - Cmd/Ctrl + S or Space
+      if ((isModifierKey && e.key === 's') || (e.key === ' ' && !e.target.matches('input'))) {
+        e.preventDefault()
+        nextWord()
+      }
+      // Show/Hide Answer - Cmd/Ctrl + A
+      if (isModifierKey && e.key === 'a') {
+        e.preventDefault()
+        setShowCorrectWord(prev => !prev)
+      }
+      // History - Cmd/Ctrl + H
+      if (isModifierKey && e.key === 'h') {
+        e.preventDefault()
+        setShowHistory(prev => !prev)
+      }
+      // Reset - Cmd/Ctrl + R
+      if (isModifierKey && e.key === 'r') {
+        e.preventDefault()
+        handleReset()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyboardShortcuts)
+    return () => window.removeEventListener('keydown', handleKeyboardShortcuts)
+  }, [])
+
   return (
     <ChakraProvider theme={theme}>
       <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" p={4}>
@@ -172,7 +204,7 @@ export default function HomeComponent() {
         >
           <VStack spacing={4} p={6}>
             <Heading as="h1" size="xl" textAlign="center" color="gray.100">
-              Spelling Checker
+              {/* Spelling Checker */}
             </Heading>
             <Text textAlign="center" color="gray.300" fontSize={["sm", "md"]}>
               Type the correct spelling for the word below
@@ -230,6 +262,7 @@ export default function HomeComponent() {
                 bg="green.700"
                 _hover={{ bg: "green.600" }}
                 color="gray.100"
+                title="Mac: ⌘ + S | Win: Ctrl + S | Space"
               >
                 <ChevronRight size={16} />
               </Button>
@@ -239,6 +272,7 @@ export default function HomeComponent() {
                 _hover={{ bg: "yellow.600" }}
                 color="yellow.100"
                 aria-label="Reset everything"
+                title="Mac: ⌘ + R | Win: Ctrl + R"
               >
                 <RotateCcw size={16} />
               </Button>
@@ -268,6 +302,7 @@ export default function HomeComponent() {
                 color="gray.100"
                 onClick={() => setShowCorrectWord(!showCorrectWord)}
                 leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
+                title="Mac: ⌘ + A | Win: Ctrl + A"
               >
                 {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
               </Button>
@@ -279,6 +314,7 @@ export default function HomeComponent() {
                 color="gray.100"
                 onClick={() => setShowHistory(!showHistory)}
                 leftIcon={<History size={16} />}
+                title="Mac: ⌘ + H | Win: Ctrl + H"
               >
                 History
               </Button>
