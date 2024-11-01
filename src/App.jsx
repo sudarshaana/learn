@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import {  Eye, EyeOff, History, Volume2 } from "lucide-react"
+import {  Eye, EyeOff, History, Volume2, HelpCircle } from "lucide-react"
 import {
   ChakraProvider,
   Box,
@@ -9,7 +9,10 @@ import {
   Heading,
   Text,
   Button,
-  Flex
+  Flex,
+  Spinner,
+  useToast,
+  IconButton
 } from "@chakra-ui/react"
 
 import { wordsPromise } from "./data/words.js"
@@ -21,6 +24,10 @@ import { HistoryModal } from './components/HistoryModal'
 import { useSpeech } from './hooks/useSpeech'
 import { theme } from './utils/theme'
 import { getRandomGradient } from './styles/gradients'
+import { ProgressBar } from './components/ProgressBar'
+import { StreakCounter } from './components/StreakCounter'
+import { ShortcutsGuide } from './components/ShortcutsGuide'
+import { ThemeToggle } from './components/ThemeToggle'
 
 export default function HomeComponent() {
   const [words, setWords] = useState([])
@@ -52,6 +59,13 @@ export default function HomeComponent() {
 
   const { speakWord } = useSpeech()
 
+  const [isLoading, setIsLoading] = useState(true)
+
+  const toast = useToast()
+
+  const [streak, setStreak] = useState(0)
+  const [showShortcuts, setShowShortcuts] = useState(false)
+
   useEffect(() => {
     localStorage.setItem('currentWordIndex', currentWordIndex.toString())
   }, [currentWordIndex])
@@ -59,6 +73,7 @@ export default function HomeComponent() {
   useEffect(() => {
     wordsPromise.then(loadedWords => {
       setWords(loadedWords)
+      setIsLoading(false)
       const saved = localStorage.getItem('currentWordIndex')
       if (saved && parseInt(saved, 10) >= loadedWords.length) {
         setCurrentWordIndex(0)
@@ -86,10 +101,12 @@ export default function HomeComponent() {
     const isAnswerCorrect = userInput.toLowerCase().trim() === currentWord.correct.toLowerCase()
     setIsCorrect(isAnswerCorrect)
     if (isAnswerCorrect) {
+      setStreak(prev => prev + 1)
       const newCount = correctCount + 1
       setCorrectCount(newCount)
       localStorage.setItem('correctCount', newCount.toString())
     } else if (!hasCountedIncorrect) {
+      setStreak(0)
       const newCount = incorrectCount + 1
       setIncorrectCount(newCount)
       setHasCountedIncorrect(true)
@@ -106,6 +123,17 @@ export default function HomeComponent() {
 
     setWordHistory(newHistory)
     localStorage.setItem('wordHistory', JSON.stringify(newHistory))
+
+    toast({
+      title: isAnswerCorrect ? "Correct!" : "Try Again",
+      description: isAnswerCorrect
+        ? "Great job! Moving to next word..."
+        : `The correct spelling is "${currentWord.correct}"`,
+      status: isAnswerCorrect ? "success" : "error",
+      duration: 2000,
+      isClosable: true,
+      position: "top"
+    })
   }
 
   const handleInputChange = (e) => {
@@ -222,111 +250,146 @@ export default function HomeComponent() {
 
   return (
     <ChakraProvider theme={theme}>
+      <ThemeToggle />
+
+      <IconButton
+        position="fixed"
+        top={4}
+        left={4}
+        icon={<HelpCircle size={20} />}
+        onClick={() => setShowShortcuts(true)}
+        variant="ghost"
+        color="gray.400"
+        _hover={{ color: "gray.100" }}
+        aria-label="Show keyboard shortcuts"
+      />
+
       <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" p={4}>
-        <Box
-          width="full"
-          maxWidth="md"
-          bgGradient={bgGradient}
-          borderRadius="lg"
-          boxShadow="dark-lg"
-          borderWidth={1}
-          borderColor="gray.700"
-          position="relative"
-        >
-          <VStack spacing={4} p={6}>
-            <Heading as="h1" size="xl" textAlign="center" color="gray.100">
-              {/* Spelling Checker */}
-            </Heading>
-
-            <Text textAlign="center" color="gray.400" fontSize={["sm", "md"]}>
-              Type the correct spelling for the word below
-            </Text>
-
-            <WordDisplay
-              word={currentWord}
-              onSpeak={speakWord}
-            />
-
-            <InputSection
-              userInput={userInput}
-              onInputChange={handleInputChange}
-              onKeyDown={handleKeyDown}
-              isCorrect={isCorrect}
-            />
-
-            <ButtonControls
-              onCheck={checkPronunciation}
-              onPrev={prevWord}
-              onNext={nextWord}
-              onReset={handleReset}
-            />
-
-            <StatsDisplay
-              correctCount={correctCount}
-              incorrectCount={incorrectCount}
-              currentIndex={currentWordIndex}
-              totalWords={words.length}
-            />
-          </VStack>
-
-          <Flex
-            position="absolute"
-            bottom="-50px"
-            left="50%"
-            transform="translateX(-50%)"
-            gap={2}
-          >
-            <Button
-              size="sm"
-              bg="gray.700"
-              _hover={{ bg: "gray.600" }}
-              color="gray.100"
-              onClick={() => setShowCorrectWord(!showCorrectWord)}
-              leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
-              title="Mac: ⌘ + A | Win: Ctrl + A"
-            >
-              {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
-            </Button>
-
-            <Button
-              size="sm"
-              bg="gray.700"
-              _hover={{ bg: "gray.600" }}
-              color="gray.100"
-              onClick={() => setShowHistory(!showHistory)}
-              leftIcon={<History size={16} />}
-              title="Mac: ⌘ + H | Win: Ctrl + H"
-            >
-              History
-            </Button>
+        {isLoading ? (
+          <Flex direction="column" align="center" gap={4}>
+            <Spinner size="xl" color="blue.400" />
+            <Text color="gray.400">Loading words...</Text>
           </Flex>
-          {showCorrectWord && (
+        ) : (
+          <Box
+            width="full"
+            maxWidth={{ base: "95%", md: "md" }}
+            mx="auto"
+            p={{ base: 4, md: 6 }}
+            bgGradient={bgGradient}
+            borderRadius="lg"
+            boxShadow="dark-lg"
+            borderWidth={1}
+            borderColor="gray.700"
+            position="relative"
+          >
+            <VStack spacing={4} p={6}>
+              <ProgressBar
+                current={currentWordIndex + 1}
+                total={words.length}
+              />
+
+              <StreakCounter streak={streak} />
+
+              <Heading as="h1" size="xl" textAlign="center" color="gray.100">
+                {/* Spelling Checker */}
+              </Heading>
+
+              <Text textAlign="center" color="gray.400" fontSize={["sm", "md"]}>
+                Type the correct spelling for the word below
+              </Text>
+
+              <WordDisplay
+                word={currentWord}
+                onSpeak={speakWord}
+              />
+
+              <InputSection
+                userInput={userInput}
+                onInputChange={handleInputChange}
+                onKeyDown={handleKeyDown}
+                isCorrect={isCorrect}
+              />
+
+              <ButtonControls
+                onCheck={checkPronunciation}
+                onPrev={prevWord}
+                onNext={nextWord}
+                onReset={handleReset}
+              />
+
+              <StatsDisplay
+                correctCount={correctCount}
+                incorrectCount={incorrectCount}
+                currentIndex={currentWordIndex}
+                totalWords={words.length}
+              />
+            </VStack>
+
             <Flex
               position="absolute"
-              bottom="-80px"
+              bottom="-50px"
               left="50%"
               transform="translateX(-50%)"
-              color="gray.300"
-              fontSize="lg"
-              fontWeight="bold"
-              alignItems="center"
               gap={2}
             >
-              {currentWord.correct}
               <Button
-                size="xs"
-                variant="ghost"
-                color="gray.400"
-                _hover={{ color: "gray.200" }}
-                onClick={() => speakWord(currentWord.correct)}
-                title="Listen to pronunciation"
-                aria-label="Listen to pronunciation"
+                size="sm"
+                bg="gray.700"
+                _hover={{ bg: "gray.600" }}
+                color="gray.100"
+                onClick={() => setShowCorrectWord(!showCorrectWord)}
+                leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
+                title="Mac: ⌘ + A | Win: Ctrl + A"
               >
-                <Volume2 size={16} />
+                {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
+              </Button>
+
+              <Button
+                size="sm"
+                bg="gray.700"
+                _hover={{ bg: "gray.600" }}
+                color="gray.100"
+                onClick={() => setShowHistory(!showHistory)}
+                leftIcon={<History size={16} />}
+                title="Mac: ⌘ + H | Win: Ctrl + H"
+              >
+                History
               </Button>
             </Flex>
-          )}
-        </Box>
+            {showCorrectWord && (
+              <Flex
+                position="absolute"
+                bottom="-80px"
+                left="50%"
+                transform="translateX(-50%)"
+                color="gray.300"
+                fontSize="lg"
+                fontWeight="bold"
+                alignItems="center"
+                gap={2}
+              >
+                {currentWord.correct}
+                <Button
+                  size="xs"
+                  variant="ghost"
+                  color="gray.400"
+                  _hover={{ color: "gray.200" }}
+                  onClick={() => speakWord(currentWord.correct)}
+                  title="Listen to pronunciation"
+                  aria-label="Listen to pronunciation"
+                >
+                  <Volume2 size={16} />
+                </Button>
+              </Flex>
+            )}
+          </Box>
+        )}
+
+        <ShortcutsGuide
+          isOpen={showShortcuts}
+          onClose={() => setShowShortcuts(false)}
+        />
 
         <HistoryModal
           isOpen={showHistory}
