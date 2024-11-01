@@ -1,9 +1,9 @@
 import PropTypes from 'prop-types'
-import { Flex, Button } from "@chakra-ui/react"
-import { Volume2 } from "lucide-react"
+import { Flex, Button, Tooltip } from "@chakra-ui/react"
+import { Volume2, VolumeX } from "lucide-react"
 import { motion } from "framer-motion"
 
-export const WordDisplay = ({ word, onSpeak }) => {
+export const WordDisplay = ({ word, onSpeak, isSpeechSupported }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -25,17 +25,30 @@ export const WordDisplay = ({ word, onSpeak }) => {
         gap={4}
       >
         {word.incorrect}
-        <Button
-          size="sm"
-          variant="ghost"
-          color="gray.300"
-          _hover={{ color: "gray.100" }}
-          onClick={() => onSpeak(word.correct)}
-          title="Mac: ⌘ + L | Win: Ctrl + L"
-          aria-label="Listen to pronunciation"
+        <Tooltip
+          label={isSpeechSupported ?
+            "Mac: ⌘ + L | Win: Ctrl + L" :
+            "Speech not supported on this device"
+          }
         >
-          <Volume2 size={20} />
-        </Button>
+          <Button
+            size="sm"
+            variant="ghost"
+            color="gray.300"
+            _hover={{ color: "gray.100" }}
+            onClick={() => onSpeak(word.correct)}
+            aria-label={isSpeechSupported ?
+              "Listen to pronunciation" :
+              "Speech not supported"
+            }
+          >
+            {isSpeechSupported ? (
+              <Volume2 size={20} />
+            ) : (
+              <VolumeX size={20} />
+            )}
+          </Button>
+        </Tooltip>
       </Flex>
     </motion.div>
   )
@@ -46,5 +59,10 @@ WordDisplay.propTypes = {
     correct: PropTypes.string.isRequired,
     incorrect: PropTypes.string.isRequired
   }).isRequired,
-  onSpeak: PropTypes.func.isRequired
+  onSpeak: PropTypes.func.isRequired,
+  isSpeechSupported: PropTypes.bool
+}
+
+WordDisplay.defaultProps = {
+  isSpeechSupported: true
 }
