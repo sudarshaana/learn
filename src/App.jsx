@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { CheckCircle, XCircle, ChevronRight, RotateCcw, Eye, EyeOff } from "lucide-react"
+import { CheckCircle, XCircle, ChevronRight, RotateCcw, Eye, EyeOff, History, X } from "lucide-react"
 import {
   ChakraProvider,
   extendTheme,
@@ -53,6 +53,11 @@ export default function HomeComponent() {
   const [incorrectCount, setIncorrectCount] = useState(0)
   const [hasCountedIncorrect, setHasCountedIncorrect] = useState(false)
   const [showCorrectWord, setShowCorrectWord] = useState(false)
+  const [showHistory, setShowHistory] = useState(false)
+  const [wordHistory, setWordHistory] = useState(() => {
+    const savedHistory = localStorage.getItem('wordHistory')
+    return savedHistory ? JSON.parse(savedHistory) : []
+  })
 
   useEffect(() => {
     localStorage.setItem('currentWordIndex', currentWordIndex.toString())
@@ -81,6 +86,16 @@ export default function HomeComponent() {
       setIncorrectCount(prev => prev + 1)
       setHasCountedIncorrect(true)
     }
+
+    const newHistory = [{
+      word: currentWord.correct,
+      isCorrect: isAnswerCorrect,
+      attempt: userInput,
+      timestamp: Date.now()
+    }, ...wordHistory.filter(item => item.word !== currentWord.correct)]
+
+    setWordHistory(newHistory)
+    localStorage.setItem('wordHistory', JSON.stringify(newHistory))
   }
 
   const handleInputChange = (e) => {
@@ -120,6 +135,8 @@ export default function HomeComponent() {
     setHasCountedIncorrect(false)
     localStorage.setItem('currentWordIndex', '0')
     setRandomGradient(darkGradientPalettes[Math.floor(Math.random() * darkGradientPalettes.length)])
+    setWordHistory([])
+    localStorage.removeItem('wordHistory')
   }
 
   const bgGradient = `linear(to-br, ${randomGradient[0]}, ${randomGradient[1]}, ${randomGradient[2]})`
@@ -221,20 +238,35 @@ export default function HomeComponent() {
                 {currentWordIndex + 1} of {words.length}
               </Text>
             </Flex>
-            <Button
+            <Flex
               position="absolute"
               bottom="-50px"
               left="50%"
               transform="translateX(-50%)"
-              size="sm"
-              bg="gray.700"
-              _hover={{ bg: "gray.600" }}
-              color="gray.100"
-              onClick={() => setShowCorrectWord(!showCorrectWord)}
-              leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
+              gap={2}
             >
-              {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
-            </Button>
+              <Button
+                size="sm"
+                bg="gray.700"
+                _hover={{ bg: "gray.600" }}
+                color="gray.100"
+                onClick={() => setShowCorrectWord(!showCorrectWord)}
+                leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
+              >
+                {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
+              </Button>
+
+              <Button
+                size="sm"
+                bg="gray.700"
+                _hover={{ bg: "gray.600" }}
+                color="gray.100"
+                onClick={() => setShowHistory(!showHistory)}
+                leftIcon={<History size={16} />}
+              >
+                History
+              </Button>
+            </Flex>
 
             {showCorrectWord && (
               <Text
@@ -248,6 +280,81 @@ export default function HomeComponent() {
               >
                 {currentWord.correct}
               </Text>
+            )}
+
+            {showHistory && (
+              <Box
+                position="fixed"
+                inset={0}
+                bg="blackAlpha.600"
+                display="flex"
+                alignItems="center"
+                justifyContent="center"
+                zIndex={1000}
+                onClick={() => setShowHistory(false)}
+              >
+                <Box
+                  bg="gray.800"
+                  borderRadius="lg"
+                  p={6}
+                  maxHeight="80vh"
+                  maxWidth="500px"
+                  width="90%"
+                  overflowY="auto"
+                  borderWidth={1}
+                  borderColor="gray.700"
+                  boxShadow="dark-lg"
+                  position="relative"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <Button
+                    position="absolute"
+                    right={2}
+                    top={2}
+                    size="sm"
+                    variant="ghost"
+                    color="gray.400"
+                    _hover={{ bg: "gray.700" }}
+                    onClick={() => setShowHistory(false)}
+                  >
+                    <X size={20} />
+                  </Button>
+
+                  <VStack spacing={4} align="stretch" pt={2}>
+                    <Heading size="md" color="gray.100" mb={2}>Attempt History</Heading>
+                    {wordHistory.map((item, index) => (
+                      <Flex
+                        key={item.timestamp}
+                        justify="space-between"
+                        align="center"
+                        p={3}
+                        bg="gray.900"
+                        borderRadius="md"
+                      >
+                        <VStack align="start" spacing={1}>
+                          <Text color="gray.100">{item.word}</Text>
+                          <Text color="gray.400" fontSize="sm">
+                            Attempt: {item.attempt}
+                          </Text>
+                          <Text color="gray.500" fontSize="xs">
+                            {new Date(item.timestamp).toLocaleString()}
+                          </Text>
+                        </VStack>
+                        {item.isCorrect ? (
+                          <CheckCircle color="green" size={20} />
+                        ) : (
+                          <XCircle color="red" size={20} />
+                        )}
+                      </Flex>
+                    ))}
+                    {wordHistory.length === 0 && (
+                      <Text color="gray.400" textAlign="center">
+                        No attempts yet
+                      </Text>
+                    )}
+                  </VStack>
+                </Box>
+              </Box>
             )}
           </VStack>
         </Box>
