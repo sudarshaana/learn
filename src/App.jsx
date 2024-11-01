@@ -109,16 +109,6 @@ export default function HomeComponent() {
       setCorrectCount(newCount)
       localStorage.setItem('correctCount', newCount.toString())
 
-      // Show success toast
-      toast({
-        title: "Correct!",
-        description: "Great job! Moving to next word...",
-        status: "success",
-        duration: 1000, // Reduced duration since we're auto-advancing
-        isClosable: true,
-        position: "top"
-      })
-
       // Automatically move to next word after a short delay
       setTimeout(() => {
         nextWord()
@@ -132,16 +122,6 @@ export default function HomeComponent() {
         localStorage.setItem('incorrectCount', newCount.toString())
         localStorage.setItem('hasCountedIncorrect', 'true')
       }
-
-      // Show error toast
-      toast({
-        title: "Try Again",
-        description: `The correct spelling is "${currentWord.correct}"`,
-        status: "error",
-        duration: 2000,
-        isClosable: true,
-        position: "top"
-      })
     }
 
     const newHistory = [{
