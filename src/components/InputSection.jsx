@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import { Flex, Input, Box } from "@chakra-ui/react"
 import { CheckCircle, XCircle } from "lucide-react"
+import { useEffect, useRef } from 'react'
 
 export const InputSection = ({
   userInput,
@@ -8,9 +9,19 @@ export const InputSection = ({
   onKeyDown,
   isCorrect
 }) => {
+  const inputRef = useRef(null)
+
+  // Auto focus when component mounts or when input is cleared
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [userInput])
+
   return (
     <Flex width="full" position="relative" alignItems="center" gap={4}>
       <Input
+        ref={inputRef}
         placeholder="Type the correct spelling"
         value={userInput}
         onChange={onInputChange}
@@ -23,6 +34,10 @@ export const InputSection = ({
         textAlign="center"
         _placeholder={{ color: "gray.400" }}
         _focus={{ borderColor: "indigo.600" }}
+        autoComplete="off"  // Disable browser autocomplete
+        autoCorrect="off"   // Disable browser autocorrect
+        autoCapitalize="off" // Disable auto capitalization
+        spellCheck="false"  // Disable spell check
       />
       {isCorrect !== null && (
         <Box

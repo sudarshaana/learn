@@ -102,18 +102,46 @@ export default function HomeComponent() {
   const checkPronunciation = () => {
     const isAnswerCorrect = userInput.toLowerCase().trim() === currentWord.correct.toLowerCase()
     setIsCorrect(isAnswerCorrect)
+
     if (isAnswerCorrect) {
       setStreak(prev => prev + 1)
       const newCount = correctCount + 1
       setCorrectCount(newCount)
       localStorage.setItem('correctCount', newCount.toString())
-    } else if (!hasCountedIncorrect) {
+
+      // Show success toast
+      toast({
+        title: "Correct!",
+        description: "Great job! Moving to next word...",
+        status: "success",
+        duration: 1000, // Reduced duration since we're auto-advancing
+        isClosable: true,
+        position: "top"
+      })
+
+      // Automatically move to next word after a short delay
+      setTimeout(() => {
+        nextWord()
+      }, 1000) // 1 second delay to show the success state
+    } else {
       setStreak(0)
-      const newCount = incorrectCount + 1
-      setIncorrectCount(newCount)
-      setHasCountedIncorrect(true)
-      localStorage.setItem('incorrectCount', newCount.toString())
-      localStorage.setItem('hasCountedIncorrect', 'true')
+      if (!hasCountedIncorrect) {
+        const newCount = incorrectCount + 1
+        setIncorrectCount(newCount)
+        setHasCountedIncorrect(true)
+        localStorage.setItem('incorrectCount', newCount.toString())
+        localStorage.setItem('hasCountedIncorrect', 'true')
+      }
+
+      // Show error toast
+      toast({
+        title: "Try Again",
+        description: `The correct spelling is "${currentWord.correct}"`,
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "top"
+      })
     }
 
     const newHistory = [{
@@ -125,17 +153,6 @@ export default function HomeComponent() {
 
     setWordHistory(newHistory)
     localStorage.setItem('wordHistory', JSON.stringify(newHistory))
-
-    toast({
-      title: isAnswerCorrect ? "Correct!" : "Try Again",
-      description: isAnswerCorrect
-        ? "Great job! Moving to next word..."
-        : `The correct spelling is "${currentWord.correct}"`,
-      status: isAnswerCorrect ? "success" : "error",
-      duration: 2000,
-      isClosable: true,
-      position: "top"
-    })
   }
 
   const handleInputChange = (e) => {
@@ -145,11 +162,7 @@ export default function HomeComponent() {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
-      if (isCorrect === true) {
-        nextWord()
-      } else {
-        checkPronunciation()
-      }
+      checkPronunciation()
     }
   }
 
