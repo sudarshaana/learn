@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { CheckCircle, XCircle, ChevronRight, RotateCcw } from "lucide-react"
+import { CheckCircle, XCircle, ChevronRight, RotateCcw, Eye, EyeOff } from "lucide-react"
 import {
   ChakraProvider,
   extendTheme,
@@ -52,6 +52,7 @@ export default function HomeComponent() {
   const [correctCount, setCorrectCount] = useState(0)
   const [incorrectCount, setIncorrectCount] = useState(0)
   const [hasCountedIncorrect, setHasCountedIncorrect] = useState(false)
+  const [showCorrectWord, setShowCorrectWord] = useState(false)
 
   useEffect(() => {
     localStorage.setItem('currentWordIndex', currentWordIndex.toString())
@@ -134,6 +135,7 @@ export default function HomeComponent() {
           boxShadow="dark-lg"
           borderWidth={1}
           borderColor="gray.700"
+          position="relative"
         >
           <VStack spacing={4} p={6}>
             <Heading as="h1" size="xl" textAlign="center" color="gray.100">
@@ -219,6 +221,34 @@ export default function HomeComponent() {
                 {currentWordIndex + 1} of {words.length}
               </Text>
             </Flex>
+            <Button
+              position="absolute"
+              bottom="-50px"
+              left="50%"
+              transform="translateX(-50%)"
+              size="sm"
+              bg="gray.700"
+              _hover={{ bg: "gray.600" }}
+              color="gray.100"
+              onClick={() => setShowCorrectWord(!showCorrectWord)}
+              leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
+            >
+              {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
+            </Button>
+
+            {showCorrectWord && (
+              <Text
+                position="absolute"
+                bottom="-80px"
+                left="50%"
+                transform="translateX(-50%)"
+                color="gray.300"
+                fontSize="lg"
+                fontWeight="bold"
+              >
+                {currentWord.correct}
+              </Text>
+            )}
           </VStack>
         </Box>
       </Box>
