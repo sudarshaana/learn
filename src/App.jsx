@@ -49,8 +49,14 @@ export default function HomeComponent() {
   const [randomGradient, setRandomGradient] = useState(
     darkGradientPalettes[Math.floor(Math.random() * darkGradientPalettes.length)]
   )
-  const [correctCount, setCorrectCount] = useState(0)
-  const [incorrectCount, setIncorrectCount] = useState(0)
+  const [correctCount, setCorrectCount] = useState(() => {
+    const saved = localStorage.getItem('correctCount')
+    return saved ? parseInt(saved, 10) : 0
+  })
+  const [incorrectCount, setIncorrectCount] = useState(() => {
+    const saved = localStorage.getItem('incorrectCount')
+    return saved ? parseInt(saved, 10) : 0
+  })
   const [hasCountedIncorrect, setHasCountedIncorrect] = useState(false)
   const [showCorrectWord, setShowCorrectWord] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
@@ -74,6 +80,14 @@ export default function HomeComponent() {
       console.error('Error loading words:', error)
     })
   }, [])
+
+  useEffect(() => {
+    localStorage.setItem('correctCount', correctCount.toString())
+  }, [correctCount])
+
+  useEffect(() => {
+    localStorage.setItem('incorrectCount', incorrectCount.toString())
+  }, [incorrectCount])
 
   const currentWord = words.length > 0 ? words[currentWordIndex] : { correct: '', incorrect: '' }
 
@@ -134,6 +148,8 @@ export default function HomeComponent() {
     setIncorrectCount(0)
     setHasCountedIncorrect(false)
     localStorage.setItem('currentWordIndex', '0')
+    localStorage.removeItem('correctCount')
+    localStorage.removeItem('incorrectCount')
     setRandomGradient(darkGradientPalettes[Math.floor(Math.random() * darkGradientPalettes.length)])
     setWordHistory([])
     localStorage.removeItem('wordHistory')
