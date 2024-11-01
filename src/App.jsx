@@ -222,11 +222,17 @@ export default function HomeComponent() {
       //   e.preventDefault()
       //   handleReset()
       // }
+
+      // Listen shortcut - Cmd/Ctrl + L
+      if (isModifierKey && e.key === 'l') {
+        e.preventDefault()
+        speakWord(currentWord.correct)
+      }
     }
 
     window.addEventListener('keydown', handleKeyboardShortcuts)
     return () => window.removeEventListener('keydown', handleKeyboardShortcuts)
-  }, [showHistory])
+  }, [showHistory, currentWord])
 
   const speakWord = (word) => {
     if ('speechSynthesis' in window) {
@@ -291,7 +297,7 @@ export default function HomeComponent() {
                 color="gray.300"
                 _hover={{ color: "gray.100" }}
                 onClick={() => speakWord(currentWord.correct)}
-                title="Listen to pronunciation"
+                title="Mac: ⌘ + L | Win: Ctrl + L"
                 aria-label="Listen to pronunciation"
               >
                 <Volume2 size={20} />
@@ -308,6 +314,7 @@ export default function HomeComponent() {
                 mb={2}
                 borderColor="gray.700"
                 color="gray.100"
+                textAlign="center"
                 _placeholder={{ color: "gray.400" }}
                 _focus={{ borderColor: "indigo.600" }}
               />
