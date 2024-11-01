@@ -15,44 +15,14 @@ import {
 } from "@chakra-ui/react"
 
 import { wordsPromise } from "./data/words.js"
-
-const darkGradientPalettes = [
-  ["blue.800", "blue.900", "gray.900"],
-  ["gray.700", "gray.800", "gray.900"],
-  ["blue.800", "gray.900", "gray.900"],
-  ["cyan.800", "blue.900", "gray.900"],
-  ["teal.800", "blue.900", "gray.900"],
-  ["purple.800", "purple.900", "gray.900"],
-  ["pink.800", "purple.900", "gray.900"],
-  ["violet.800", "purple.900", "gray.900"],
-  // ["orange.800", "red.900", "gray.900"],
-  ["yellow.800", "orange.900", "gray.900"],
-  ["teal.800", "cyan.900", "gray.900"],
-  ["cyan.800", "teal.900", "gray.900"],
-  ["blue.800", "teal.900", "gray.900"],
-  ["gray.700", "gray.800", "gray.900"],
-  ["gray.800", "blue.900", "gray.900"],
-  ["gray.800", "purple.900", "gray.900"],
-  ["purple.800", "blue.900", "gray.900"],
-  ["teal.800", "purple.900", "gray.900"],
-  ["blue.800", "purple.900", "gray.900"],
-  ["cyan.800", "purple.900", "gray.900"],
-  ["violet.800", "blue.900", "gray.900"]
-]
-
-const theme = extendTheme({
-  config: {
-    initialColorMode: "dark",
-    useSystemColorMode: false,
-  },
-  styles: {
-    global: {
-      body: {
-        bg: "gray.950",
-      },
-    },
-  },
-})
+import { WordDisplay } from './components/WordDisplay'
+import { InputSection } from './components/InputSection'
+import { ButtonControls } from './components/ButtonControls'
+import { StatsDisplay } from './components/StatsDisplay'
+import { HistoryModal } from './components/HistoryModal'
+import { useSpeech } from './hooks/useSpeech'
+import { theme } from './utils/theme'
+import { getRandomGradient } from './styles/gradients'
 
 export default function HomeComponent() {
   const [words, setWords] = useState([])
@@ -62,9 +32,7 @@ export default function HomeComponent() {
   })
   const [userInput, setUserInput] = useState("")
   const [isCorrect, setIsCorrect] = useState(null)
-  const [randomGradient, setRandomGradient] = useState(
-    darkGradientPalettes[Math.floor(Math.random() * darkGradientPalettes.length)]
-  )
+  const [randomGradient, setRandomGradient] = useState(getRandomGradient)
   const [correctCount, setCorrectCount] = useState(() => {
     const saved = localStorage.getItem('correctCount')
     return saved ? parseInt(saved, 10) : 0
@@ -83,6 +51,8 @@ export default function HomeComponent() {
     const savedHistory = localStorage.getItem('wordHistory')
     return savedHistory ? JSON.parse(savedHistory) : []
   })
+
+  const { speakWord } = useSpeech()
 
   useEffect(() => {
     localStorage.setItem('currentWordIndex', currentWordIndex.toString())
@@ -161,7 +131,7 @@ export default function HomeComponent() {
     setIsCorrect(null)
     setHasCountedIncorrect(false)
     localStorage.setItem('hasCountedIncorrect', 'false')
-    setRandomGradient(darkGradientPalettes[Math.floor(Math.random() * darkGradientPalettes.length)])
+    setRandomGradient(getRandomGradient())
   }
 
   const prevWord = () => {
@@ -173,7 +143,7 @@ export default function HomeComponent() {
     setIsCorrect(null)
     setHasCountedIncorrect(false)
     localStorage.setItem('hasCountedIncorrect', 'false')
-    setRandomGradient(darkGradientPalettes[Math.floor(Math.random() * darkGradientPalettes.length)])
+    setRandomGradient(getRandomGradient())
   }
 
   useEffect(() => {
@@ -196,7 +166,7 @@ export default function HomeComponent() {
     localStorage.removeItem('hasCountedIncorrect')
     localStorage.removeItem('wordHistory')
 
-    setRandomGradient(darkGradientPalettes[Math.floor(Math.random() * darkGradientPalettes.length)])
+    setRandomGradient(getRandomGradient())
   }
 
   const bgGradient = `linear(to-br, ${randomGradient.join(', ')})`
@@ -252,29 +222,6 @@ export default function HomeComponent() {
     return () => window.removeEventListener('keydown', handleKeyboardShortcuts)
   }, [showHistory, currentWord])
 
-  const speakWord = (word) => {
-    if ('speechSynthesis' in window) {
-      // Cancel any ongoing speech
-      window.speechSynthesis.cancel()
-
-      const utterance = new SpeechSynthesisUtterance(word)
-
-      // Optional: Set voice properties
-      utterance.rate = 0.9  // Slightly slower
-      utterance.pitch = 1
-      utterance.volume = 1
-
-      // Optional: Use English voice if available
-      const voices = window.speechSynthesis.getVoices()
-      const englishVoice = voices.find(voice => voice.lang.includes('en'))
-      if (englishVoice) {
-        utterance.voice = englishVoice
-      }
-
-      window.speechSynthesis.speak(utterance)
-    }
-  }
-
   return (
     <ChakraProvider theme={theme}>
       <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" p={4}>
@@ -290,120 +237,38 @@ export default function HomeComponent() {
         >
           <VStack spacing={4} p={6}>
             <Heading as="h1" size="xl" textAlign="center" color="gray.100">
-              {/* Spelling Checker */}
+              Spelling Checker
             </Heading>
+
             <Text textAlign="center" color="gray.300" fontSize={["sm", "md"]}>
               Type the correct spelling for the word below
             </Text>
-            <Flex
-              fontSize={["2xl", "3xl"]}
-              fontWeight="bold"
-              textAlign="center"
-              color="gray.100"
-              wordBreak="break-word"
-              px={2}
-              mt={2}
-              mb={2}
-              alignItems="center"
-              justifyContent="center"
-              gap={4}
-            >
-              {currentWord.incorrect}
-              <Button
-                size="sm"
-                variant="ghost"
-                color="gray.300"
-                _hover={{ color: "gray.100" }}
-                onClick={() => speakWord(currentWord.correct)}
-                title="Mac: ⌘ + L | Win: Ctrl + L"
-                aria-label="Listen to pronunciation"
-              >
-                <Volume2 size={20} />
-              </Button>
-            </Flex>
-            <Flex width="full" position="relative" alignItems="center" gap={4}>
-              <Input
-                placeholder="Type the correct spelling"
-                value={userInput}
-                onChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                aria-label="Enter correct spelling"
-                bg="gray.800"
-                mb={2}
-                borderColor="gray.700"
-                color="gray.100"
-                textAlign="center"
-                _placeholder={{ color: "gray.400" }}
-                _focus={{ borderColor: "indigo.600" }}
-              />
-              {isCorrect !== null && (
-                <Box
-                  minWidth="24px"
-                  display="flex"
-                  alignItems="center"
-                  justifyContent="center"
-                >
-                  {isCorrect ? (
-                    <CheckCircle color="green" size={24} aria-label="Correct" />
-                  ) : (
-                    <XCircle color="red" size={24} aria-label="Incorrect" />
-                  )}
-                </Box>
-              )}
-            </Flex>
-            <Button
-              onClick={checkPronunciation}
-              width="full"
-              bg="gray.600"
-              _hover={{ bg: "gray.500" }}
-              color="gray.100"
-            >
-              Check
-            </Button>
-            <Flex width="full" gap={2}>
-              <Button
-                onClick={prevWord}
-                bg="green.700"
-                _hover={{ bg: "green.600" }}
-                color="gray.100"
-                title="Mac: ⌘ + P | Win: Ctrl + P"
-                flex={1}
-              >
-                <ChevronLeft size={16} />
-              </Button>
-              <Button
-                onClick={nextWord}
-                bg="green.700"
-                _hover={{ bg: "green.600" }}
-                color="gray.100"
-                title="Mac: ⌘ + S | Win: Ctrl + S | Space"
-                flex={1}
-              >
-                <ChevronRight size={16} />
-              </Button>
-              <Button
-                onClick={handleReset}
-                bg="yellow.700"
-                _hover={{ bg: "yellow.600" }}
-                color="yellow.100"
-                aria-label="Reset everything"
-                title="Reset progress"
-                flex={1}
-              >
-                <RotateCcw size={16} />
-              </Button>
-            </Flex>
-            <Flex width="full" justifyContent="space-between">
-              <Text color="green.400" fontSize="lg">
-                Correct: {correctCount}
-              </Text>
-              <Text color="red.400" fontSize="lg">
-                Incorrect: {incorrectCount}
-              </Text>
-              <Text color="gray.300" fontSize="md">
-                {currentWordIndex + 1} of {words.length}
-              </Text>
-            </Flex>
+
+            <WordDisplay
+              word={currentWord}
+              onSpeak={speakWord}
+            />
+
+            <InputSection
+              userInput={userInput}
+              onInputChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              isCorrect={isCorrect}
+            />
+
+            <ButtonControls
+              onCheck={checkPronunciation}
+              onPrev={prevWord}
+              onNext={nextWord}
+              onReset={handleReset}
+            />
+
+            <StatsDisplay
+              correctCount={correctCount}
+              incorrectCount={incorrectCount}
+              currentIndex={currentWordIndex}
+              totalWords={words.length}
+            />
           </VStack>
 
           <Flex
@@ -465,85 +330,12 @@ export default function HomeComponent() {
           )}
         </Box>
 
-
-
-
+        <HistoryModal
+          isOpen={showHistory}
+          onClose={() => setShowHistory(false)}
+          history={wordHistory}
+        />
       </Box>
-
-      {showHistory && (
-        <Box
-          position="fixed"
-          inset={0}
-          bg="blackAlpha.600"
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          zIndex={1000}
-          onClick={() => setShowHistory(false)}
-        >
-          <Box
-            bg="gray.800"
-            borderRadius="lg"
-            p={6}
-            maxHeight="80vh"
-            maxWidth="500px"
-            width="90%"
-            overflowY="auto"
-            borderWidth={1}
-            borderColor="gray.700"
-            boxShadow="dark-lg"
-            position="relative"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <Button
-              position="absolute"
-              right={2}
-              top={2}
-              size="sm"
-              variant="ghost"
-              color="gray.400"
-              _hover={{ bg: "gray.700" }}
-              onClick={() => setShowHistory(false)}
-            >
-              <X size={20} />
-            </Button>
-
-            <VStack spacing={4} align="stretch" pt={2}>
-              <Heading size="md" color="gray.100" mb={2}>Attempt History</Heading>
-              {wordHistory.map((item, index) => (
-                <Flex
-                  key={item.timestamp}
-                  justify="space-between"
-                  align="center"
-                  p={3}
-                  bg="gray.900"
-                  borderRadius="md"
-                >
-                  <VStack align="start" spacing={1}>
-                    <Text color="gray.100">{item.word}</Text>
-                    <Text color="gray.400" fontSize="sm">
-                      Attempt: {item.attempt}
-                    </Text>
-                    <Text color="gray.500" fontSize="xs">
-                      {new Date(item.timestamp).toLocaleString()}
-                    </Text>
-                  </VStack>
-                  {item.isCorrect ? (
-                    <CheckCircle color="green" size={20} />
-                  ) : (
-                    <XCircle color="red" size={20} />
-                  )}
-                </Flex>
-              ))}
-              {wordHistory.length === 0 && (
-                <Text color="gray.400" textAlign="center">
-                  No attempts yet
-                </Text>
-              )}
-            </VStack>
-          </Box>
-        </Box>
-      )}
     </ChakraProvider>
   )
 }
