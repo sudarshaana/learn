@@ -233,7 +233,13 @@ export default function HomeComponent() {
 
   return (
     <ChakraProvider theme={theme}>
-      <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" p={[2, 4]}>
+      <Box
+        minHeight="100vh"
+        display="flex"
+        alignItems="center"
+        justifyContent="center"
+        p={{ base: 0, md: 4 }}  // Remove padding on mobile
+      >
         {isLoading ? (
           <Flex direction="column" align="center" gap={4}>
             <Spinner size="xl" color="blue.400" />
@@ -245,16 +251,19 @@ export default function HomeComponent() {
             maxWidth={{ base: "100%", md: "md" }}
             mx="auto"
             position="relative"
+            height={{ base: "100vh", md: "auto" }}  // Full height on mobile
           >
-
             <Box
-              p={{ base: 3, md: 6 }}
+              p={{ base: 4, md: 6 }}
               bgGradient={bgGradient}
-              borderRadius="lg"
-              boxShadow="dark-lg"
-              borderWidth={1}
+              borderRadius={{ base: 0, md: "lg" }}  // No border radius on mobile
+              boxShadow={{ base: "none", md: "dark-lg" }}  // No shadow on mobile
+              borderWidth={{ base: 0, md: 1 }}  // No border on mobile
               borderColor="gray.700"
               position="relative"
+              height={{ base: "100%", md: "auto" }}  // Full height on mobile
+              display="flex"
+              flexDirection="column"
             >
               <Box top="-2px" width='full'>
                 <ProgressBar
