@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { Input } from "@chakra-ui/react"
+import { Input, Box } from "@chakra-ui/react"
 import { useEffect, useRef } from 'react'
 import { motion } from "framer-motion"
 
@@ -20,49 +20,80 @@ export const InputSection = ({
     return (
         <motion.div
             style={{ width: '100%' }}
-            animate={isCorrect === false ? {
-                x: [-10, 10, -10, 10, 0],
-                transition: { duration: 0.4 }
-            } : {}}
+            animate={
+                isCorrect === false ? {
+                    x: [-10, 10, -10, 10, 0],
+                    boxShadow: [
+                        "0 0 0 rgba(245, 101, 101, 0)",
+                        "0 0 20px rgba(245, 101, 101, 0.5)",
+                        "0 0 0 rgba(245, 101, 101, 0)",
+                        "0 0 20px rgba(245, 101, 101, 0.5)",
+                        "0 0 0 rgba(245, 101, 101, 0)"
+                    ]
+                } : isCorrect === true ? {
+                    scale: [1, 1.02, 1],
+                    boxShadow: [
+                        "0 0 0 rgba(72, 187, 120, 0)",
+                        "0 0 20px rgba(72, 187, 120, 0.5)",
+                        "0 0 0 rgba(72, 187, 120, 0)"
+                    ]
+                } : {}
+            }
+            transition={{ duration: isCorrect === true ? 0.3 : 0.4 }}
         >
-            <Input
-                ref={inputRef}
-                placeholder="Type the correct spelling"
-                value={userInput}
-                onChange={onInputChange}
-                onKeyDown={onKeyDown}
-                aria-label="Enter correct spelling"
-                bg="gray.800"
-                borderWidth={2}
-                borderColor={
-                    isCorrect === true ? "green.500" :
+            <Box
+                position="relative"
+                width="full"
+            >
+                <Input
+                    ref={inputRef}
+                    placeholder="Type the correct spelling"
+                    value={userInput}
+                    onChange={onInputChange}
+                    onKeyDown={onKeyDown}
+                    aria-label="Enter correct spelling"
+                    bg="whiteAlpha.50"
+                    borderWidth={2}
+                    borderColor={
+                        isCorrect === true ? "green.500" :
                         isCorrect === false ? "red.500" :
-                            "gray.600"
-                }
-                color="gray.100"
-                textAlign="center"
-                fontSize={{ base: "md", md: "lg" }}
-                height={{ base: "45px", md: "var(--chakra-sizes-10)" }}
-                _placeholder={{
-                    color: "gray.400",
-                    fontSize: { base: "sm", md: "md" }
-                }}
-                _focus={{
-                    borderColor: isCorrect === true ? "green.500" :
-                        isCorrect === false ? "red.500" :
-                            "gray.800"
-                }}
-                _hover={{
-                    borderColor: isCorrect === true ? "green.500" :
-                        isCorrect === false ? "red.500" :
-                            "gray.800"
-                }}
-                autoComplete="off"
-                autoCorrect="off"
-                autoCapitalize="off"
-                spellCheck="false"
-                size="lg"
-            />
+                        "whiteAlpha.200"
+                    }
+                    color="white"
+                    textAlign="center"
+                    fontSize={{ base: "lg", md: "xl" }}
+                    height={{ base: "50px", md: "60px" }}
+                    _placeholder={{
+                        color: "whiteAlpha.400",
+                        fontSize: { base: "md", md: "lg" }
+                    }}
+                    _focus={{
+                        borderColor: isCorrect === true ? "green.500" :
+                                   isCorrect === false ? "red.500" :
+                                   "whiteAlpha.400",
+                        bg: "whiteAlpha.100",
+                        boxShadow: isCorrect === true ? "0 0 0 1px var(--chakra-colors-green-500)" :
+                                  isCorrect === false ? "0 0 0 1px var(--chakra-colors-red-500)" :
+                                  "none"
+                    }}
+                    _hover={{
+                        borderColor: "whiteAlpha.400",
+                        bg: "whiteAlpha.100"
+                    }}
+                    transition="all 0.3s cubic-bezier(0.4, 0, 0.2, 1)"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck="false"
+                    letterSpacing="0.5px"
+                    fontWeight="medium"
+                    sx={{
+                        '&::selection': {
+                            bg: 'whiteAlpha.200'
+                        }
+                    }}
+                />
+            </Box>
         </motion.div>
     )
 }
