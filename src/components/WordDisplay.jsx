@@ -18,12 +18,12 @@ export const WordDisplay = ({ word, onSpeak, isSpeechSupported }) => {
                 color="gray.100"
                 wordBreak="break-word"
                 px={2}
-                mt={2}
-                mb={2}
+                mt={{ base: 4, md: 12 }}
+                mb={{ base: 4, md: 12 }}
                 alignItems="center"
                 justifyContent="center"
                 gap={3}
-                minHeight={{ base: "60px", md: "80px" }}
+                minHeight={{ base: "80px", md: "120px" }}
             >
                 {word.incorrect}
                 <Tooltip

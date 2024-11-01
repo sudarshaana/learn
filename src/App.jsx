@@ -256,13 +256,6 @@ export default function HomeComponent() {
               borderColor="gray.700"
               position="relative"
             >
-
-              {/* <Box
-                position="absolute"
-                top={4}
-                right={4}
-              > */}
-              {/* <StreakCounter streak={streak} bestStreak={bestStreak} /> */}
               <Box top="-2px" width='full'>
                 <ProgressBar
                   current={currentWordIndex + 1}
@@ -277,18 +270,8 @@ export default function HomeComponent() {
                 streak={streak}
                 bestStreak={bestStreak}
               />
-              {/* </Box> */}
 
               <VStack spacing={[3, 4]} pt={12}>
-                {/* <Heading as="h1" size="xl" textAlign="center" color="gray.100">
-                  Spelling Checker
-                </Heading> */}
-
-                {/* <Text textAlign="center" color="gray.400" fontSize={["sm", "md"]}>
-                  Type the correct spelling for the word below
-                </Text> */}
-
-
 
                 <WordDisplay
                   word={currentWord}
