@@ -69,6 +69,11 @@ export default function HomeComponent() {
     return saved ? parseInt(saved, 10) : 0
   })
 
+  const [bestStreak, setBestStreak] = useState(() => {
+    const saved = localStorage.getItem('bestStreak')
+    return saved ? parseInt(saved, 10) : 0
+  })
+
   const [showShortcuts, setShowShortcuts] = useState(false)
 
   useEffect(() => {
@@ -103,6 +108,13 @@ export default function HomeComponent() {
   useEffect(() => {
     localStorage.setItem('streak', streak.toString())
   }, [streak])
+
+  useEffect(() => {
+    if (streak > bestStreak) {
+      setBestStreak(streak)
+      localStorage.setItem('bestStreak', streak.toString())
+    }
+  }, [streak, bestStreak])
 
   const currentWord = words.length > 0 ? words[currentWordIndex] : { correct: '', incorrect: '' }
 
@@ -188,6 +200,7 @@ export default function HomeComponent() {
     setHasCountedIncorrect(false)
     setWordHistory([])
     setStreak(0)
+    setBestStreak(0)
 
     localStorage.removeItem('currentWordIndex')
     localStorage.removeItem('correctCount')
@@ -195,6 +208,7 @@ export default function HomeComponent() {
     localStorage.removeItem('hasCountedIncorrect')
     localStorage.removeItem('wordHistory')
     localStorage.removeItem('streak')
+    localStorage.removeItem('bestStreak')
 
     setRandomGradient(getRandomGradient(colorMode))
   }
@@ -244,7 +258,7 @@ export default function HomeComponent() {
                 total={words.length}
               />
 
-              <StreakCounter streak={streak} />
+              <StreakCounter streak={streak} bestStreak={bestStreak} />
 
               <Heading as="h1" size="xl" textAlign="center" color="gray.100">
                 {/* Spelling Checker */}
