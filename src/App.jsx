@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { CheckCircle, XCircle, ChevronRight } from "lucide-react"
+import { CheckCircle, XCircle, ChevronRight, RotateCcw } from "lucide-react"
 import {
   ChakraProvider,
   extendTheme,
@@ -110,6 +110,17 @@ export default function HomeComponent() {
     setIsCorrect(null)
   }, [currentWordIndex])
 
+  const handleReset = () => {
+    setCurrentWordIndex(0)
+    setUserInput("")
+    setIsCorrect(null)
+    setCorrectCount(0)
+    setIncorrectCount(0)
+    setHasCountedIncorrect(false)
+    localStorage.setItem('currentWordIndex', '0')
+    setRandomGradient(darkGradientPalettes[Math.floor(Math.random() * darkGradientPalettes.length)])
+  }
+
   const bgGradient = `linear(to-br, ${randomGradient[0]}, ${randomGradient[1]}, ${randomGradient[2]})`
 
   return (
@@ -126,10 +137,10 @@ export default function HomeComponent() {
         >
           <VStack spacing={4} p={6}>
             <Heading as="h1" size="xl" textAlign="center" color="gray.100">
-              Pronunciation Checker
+              Spelling Checker
             </Heading>
             <Text textAlign="center" color="gray.300" fontSize={["sm", "md"]}>
-              Type the correct pronunciation for the word below
+              Type the correct spelling for the word below
             </Text>
             <Text
               fontSize={["2xl", "3xl"]}
@@ -186,6 +197,15 @@ export default function HomeComponent() {
                 color="gray.100"
               >
                 <ChevronRight size={16} />
+              </Button>
+              <Button
+                onClick={handleReset}
+                bg="yellow.700"
+                _hover={{ bg: "yellow.600" }}
+                color="yellow.100"
+                aria-label="Reset everything"
+              >
+                <RotateCcw size={16} />
               </Button>
             </Flex>
             <Flex width="full" justifyContent="center" gap={8}>
