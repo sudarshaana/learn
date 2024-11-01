@@ -237,10 +237,10 @@ export default function HomeComponent() {
         >
           <VStack spacing={4} p={6}>
             <Heading as="h1" size="xl" textAlign="center" color="gray.100">
-              Spelling Checker
+              {/* Spelling Checker */}
             </Heading>
 
-            <Text textAlign="center" color="gray.300" fontSize={["sm", "md"]}>
+            <Text textAlign="center" color="gray.400" fontSize={["sm", "md"]}>
               Type the correct spelling for the word below
             </Text>
 
