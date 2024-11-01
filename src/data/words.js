@@ -3,7 +3,9 @@ import Papa from 'papaparse';
 // Function to fetch and parse CSV
 async function loadWords() {
   try {
-    const response = await fetch('/src/data/word_list.csv');
+    const response = await fetch('https://raw.githubusercontent.com/sudarshaana/learn/refs/heads/main/src/data/word_list.csv');
+    //const response = await fetch('/src/data/word_list.csv');
+
     const csvText = await response.text();
 
     const { data } = Papa.parse(csvText, {
