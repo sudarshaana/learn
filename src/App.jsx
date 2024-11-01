@@ -205,10 +205,15 @@ export default function HomeComponent() {
 
   useEffect(() => {
     const handleKeyboardShortcuts = (e) => {
-      // Close history window with ESC key
+      // Handle ESC key for history window first
       if (e.key === 'Escape' && showHistory) {
         e.preventDefault()
         setShowHistory(false)
+        return
+      }
+
+      // If history is open, don't process other shortcuts
+      if (showHistory) {
         return
       }
 
@@ -229,11 +234,6 @@ export default function HomeComponent() {
         e.preventDefault()
         setShowHistory(prev => !prev)
       }
-      // Reset - Cmd/Ctrl + R
-      // if (isModifierKey && e.key === 'r') {
-      //   e.preventDefault()
-      //   handleReset()
-      // }
 
       // Listen shortcut - Cmd/Ctrl + L
       if (isModifierKey && e.key === 'l') {
