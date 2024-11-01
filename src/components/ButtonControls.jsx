@@ -13,7 +13,7 @@ export const ButtonControls = ({
             <Button
                 onClick={onCheck}
                 width="full"
-                bg="gray.600"
+                bg="green.700"
                 _hover={{ bg: "gray.500" }}
                 color="gray.300"
             >
@@ -22,7 +22,7 @@ export const ButtonControls = ({
             <Flex width="full" gap={2} mt={2}>
                 <Button
                     onClick={onPrev}
-                    bg="green.700"
+
                     _hover={{ bg: "green.600" }}
                     color="gray.100"
                     title="Mac: ⌘ + P | Win: Ctrl + P"
@@ -32,7 +32,6 @@ export const ButtonControls = ({
                 </Button>
                 <Button
                     onClick={onNext}
-                    bg="green.700"
                     _hover={{ bg: "green.600" }}
                     color="gray.100"
                     title="Mac: ⌘ + N | Win: Ctrl + N"
@@ -42,7 +41,6 @@ export const ButtonControls = ({
                 </Button>
                 <Button
                     onClick={onReset}
-                    bg="yellow.700"
                     _hover={{ bg: "yellow.600" }}
                     color="yellow.100"
                     aria-label="Reset everything"

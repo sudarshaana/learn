@@ -1,30 +1,55 @@
 import PropTypes from 'prop-types'
-import { Flex, Text } from "@chakra-ui/react"
+import { Flex, Text, Box } from "@chakra-ui/react"
+import { StreakCounter } from './StreakCounter'
 
 export const StatsDisplay = ({
     correctCount,
     incorrectCount,
     currentIndex,
-    totalWords
+    totalWords,
+    streak,
+    bestStreak
 }) => {
     return (
-        <Flex
-            width="full"
-            justifyContent="space-between"
-            flexDirection={{ base: "column", sm: "row" }}
-            gap={{ base: 2, sm: 0 }}
-            alignItems="center"
-        >
-            <Text color="green.400" fontSize={{ base: "md", md: "lg" }}>
-                Correct: {correctCount}
-            </Text>
-            <Text color="red.400" fontSize={{ base: "md", md: "lg" }}>
-                Incorrect: {incorrectCount}
-            </Text>
-            <Text color="gray.300" fontSize={{ base: "sm", md: "md" }}>
+        <Box width="full">
+            {/* Progress text */}
+            {/* <Text
+                color="gray.400"
+                fontSize="sm"
+                textAlign="right"
+                mb={2}
+            >
                 {currentIndex + 1} of {totalWords}
-            </Text>
-        </Flex>
+            </Text> */}
+
+            {/* Stats row */}
+            <Flex
+                justify="space-between"
+                align="center"
+                bg="whiteAlpha.50"
+                p={3}
+                borderRadius="lg"
+            >
+                <Text
+                    color="green.400"
+                    fontSize="sm"
+                    fontWeight="bold"
+                >
+                    Correct: {correctCount}
+                </Text>
+                <StreakCounter
+                    streak={streak}
+                    bestStreak={bestStreak}
+                />
+                <Text
+                    color="red.400"
+                    fontSize="sm"
+                    fontWeight="bold"
+                >
+                    Wrong: {incorrectCount}
+                </Text>
+            </Flex>
+        </Box>
     )
 }
 
@@ -32,5 +57,7 @@ StatsDisplay.propTypes = {
     correctCount: PropTypes.number.isRequired,
     incorrectCount: PropTypes.number.isRequired,
     currentIndex: PropTypes.number.isRequired,
-    totalWords: PropTypes.number.isRequired
+    totalWords: PropTypes.number.isRequired,
+    streak: PropTypes.number.isRequired,
+    bestStreak: PropTypes.number.isRequired
 }

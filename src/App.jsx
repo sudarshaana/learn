@@ -244,137 +244,156 @@ export default function HomeComponent() {
             width="full"
             maxWidth={{ base: "100%", md: "md" }}
             mx="auto"
-            p={{ base: 3, md: 6 }}
-            bgGradient={bgGradient}
-            borderRadius="lg"
-            boxShadow="dark-lg"
-            borderWidth={1}
-            borderColor="gray.700"
             position="relative"
           >
-            <VStack spacing={[3, 4]} p={[3, 6]}>
-              <ProgressBar
-                current={currentWordIndex + 1}
-                total={words.length}
-              />
 
-              <StreakCounter streak={streak} bestStreak={bestStreak} />
+            <Box
+              p={{ base: 3, md: 6 }}
+              bgGradient={bgGradient}
+              borderRadius="lg"
+              boxShadow="dark-lg"
+              borderWidth={1}
+              borderColor="gray.700"
+              position="relative"
+            >
 
-              <Heading as="h1" size="xl" textAlign="center" color="gray.100">
-                {/* Spelling Checker */}
-              </Heading>
-
-              <Text textAlign="center" color="gray.400" fontSize={["sm", "md"]}>
-                Type the correct spelling for the word below
-              </Text>
-
-              <WordDisplay
-                word={currentWord}
-                onSpeak={speakWord}
-              />
-
-              <InputSection
-                userInput={userInput}
-                onInputChange={handleInputChange}
-                onKeyDown={handleKeyDown}
-                isCorrect={isCorrect}
-              />
-
-              <ButtonControls
-                onCheck={checkPronunciation}
-                onPrev={prevWord}
-                onNext={nextWord}
-                onReset={handleReset}
-              />
-
+              {/* <Box
+                position="absolute"
+                top={4}
+                right={4}
+              > */}
+              {/* <StreakCounter streak={streak} bestStreak={bestStreak} /> */}
+              <Box top="-2px" width='full'>
+                <ProgressBar
+                  current={currentWordIndex + 1}
+                  total={words.length}
+                />
+              </Box>
               <StatsDisplay
                 correctCount={correctCount}
                 incorrectCount={incorrectCount}
                 currentIndex={currentWordIndex}
                 totalWords={words.length}
+                streak={streak}
+                bestStreak={bestStreak}
               />
-            </VStack>
+              {/* </Box> */}
 
-            <Flex
-              position={{ base: "relative", md: "absolute" }}
-              bottom={{ base: "auto", md: "-80px" }}
-              left="50%"
-              transform="translateX(-50%)"
-              gap={2}
-              mt={{ base: 4, md: 8 }}
-              mb={{ base: 2, md: 0 }}
-              flexWrap="wrap"
-              justifyContent="center"
-              width={{ base: "full", md: "auto" }}
-              zIndex={2}
-            >
-              <Button
-                size="sm"
-                bg="gray.700"
-                _hover={{ bg: "gray.600" }}
-                color="gray.100"
-                onClick={() => setShowCorrectWord(!showCorrectWord)}
-                leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
-                title="Mac: ⌘ + O | Win: Ctrl + O"
-              >
-                {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
-              </Button>
+              <VStack spacing={[3, 4]} pt={12}>
+                {/* <Heading as="h1" size="xl" textAlign="center" color="gray.100">
+                  Spelling Checker
+                </Heading> */}
 
-              <Button
-                size="sm"
-                bg="gray.700"
-                _hover={{ bg: "gray.600" }}
-                color="gray.100"
-                onClick={() => setShowHistory(!showHistory)}
-                leftIcon={<History size={16} />}
-                title="Mac: ⌘ + H | Win: Ctrl + H"
-              >
-                History
-              </Button>
+                {/* <Text textAlign="center" color="gray.400" fontSize={["sm", "md"]}>
+                  Type the correct spelling for the word below
+                </Text> */}
 
-              <Button
-                size="sm"
-                bg="gray.700"
-                _hover={{ bg: "gray.600" }}
-                color="gray.100"
-                onClick={() => setShowShortcuts(true)}
-                leftIcon={<HelpCircle size={16} />}
-                title="Show keyboard shortcuts"
-              >
-                Shortcuts
-              </Button>
-            </Flex>
 
-            {showCorrectWord && (
+
+                <WordDisplay
+                  word={currentWord}
+                  onSpeak={speakWord}
+                />
+
+                <InputSection
+                  userInput={userInput}
+                  onInputChange={handleInputChange}
+                  onKeyDown={handleKeyDown}
+                  isCorrect={isCorrect}
+                />
+
+                <ButtonControls
+                  onCheck={checkPronunciation}
+                  onPrev={prevWord}
+                  onNext={nextWord}
+                  onReset={handleReset}
+                />
+
+
+              </VStack>
+
+
               <Flex
                 position={{ base: "relative", md: "absolute" }}
-                bottom={{ base: "auto", md: "-120px" }}
+                bottom={{ base: "auto", md: "-80px" }}
                 left="50%"
                 transform="translateX(-50%)"
-                color="gray.300"
-                fontSize="lg"
-                fontWeight="bold"
-                alignItems="center"
                 gap={2}
-                mt={{ base: 4, md: 0 }}
+                mt={{ base: 4, md: 8 }}
                 mb={{ base: 2, md: 0 }}
-                width={{ base: "full", md: "auto" }}
+                flexWrap="wrap"
                 justifyContent="center"
+                width={{ base: "full", md: "auto" }}
+                zIndex={2}
               >
-                {currentWord.correct}
                 <Button
-                  size="xs"
-                  variant="ghost"
-                  color="gray.400"
-                  _hover={{ color: "gray.200" }}
-                  onClick={() => speakWord(currentWord.correct)}
-                  title="Listen to pronunciation"
-                  aria-label="Listen to pronunciation"
+                  size="sm"
+                  bg="gray.700"
+                  _hover={{ bg: "gray.600" }}
+                  color="gray.100"
+                  onClick={() => setShowCorrectWord(!showCorrectWord)}
+                  leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
+                  title="Mac: ⌘ + O | Win: Ctrl + O"
                 >
-                  <Volume2 size={16} />
+                  {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
+                </Button>
+
+                <Button
+                  size="sm"
+                  bg="gray.700"
+                  _hover={{ bg: "gray.600" }}
+                  color="gray.100"
+                  onClick={() => setShowHistory(!showHistory)}
+                  leftIcon={<History size={16} />}
+                  title="Mac: ⌘ + H | Win: Ctrl + H"
+                >
+                  History
+                </Button>
+
+                <Button
+                  size="sm"
+                  bg="gray.700"
+                  _hover={{ bg: "gray.600" }}
+                  color="gray.100"
+                  onClick={() => setShowShortcuts(true)}
+                  leftIcon={<HelpCircle size={16} />}
+                  title="Show keyboard shortcuts"
+                >
+                  Shortcuts
                 </Button>
               </Flex>
-            )}
+
+              {showCorrectWord && (
+                <Flex
+                  position={{ base: "relative", md: "absolute" }}
+                  bottom={{ base: "auto", md: "-120px" }}
+                  left="50%"
+                  transform="translateX(-50%)"
+                  color="gray.300"
+                  fontSize="lg"
+                  fontWeight="bold"
+                  alignItems="center"
+                  gap={2}
+                  mt={{ base: 4, md: 0 }}
+                  mb={{ base: 2, md: 0 }}
+                  width={{ base: "full", md: "auto" }}
+                  justifyContent="center"
+                >
+                  {currentWord.correct}
+                  <Button
+                    size="xs"
+                    variant="ghost"
+                    color="gray.400"
+                    _hover={{ color: "gray.200" }}
+                    onClick={() => speakWord(currentWord.correct)}
+                    title="Listen to pronunciation"
+                    aria-label="Listen to pronunciation"
+                  >
+                    <Volume2 size={16} />
+                  </Button>
+                </Flex>
+              )}
+            </Box>
           </Box>
         )}
 
