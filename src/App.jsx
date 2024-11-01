@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import {  Eye, EyeOff, History, Volume2, HelpCircle } from "lucide-react"
+import { Eye, EyeOff, History, Volume2, HelpCircle } from "lucide-react"
 import {
   ChakraProvider,
   Box,
@@ -27,6 +27,7 @@ import { getRandomGradient } from './styles/gradients'
 import { ProgressBar } from './components/ProgressBar'
 import { StreakCounter } from './components/StreakCounter'
 import { ShortcutsGuide } from './components/ShortcutsGuide'
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 
 export default function HomeComponent() {
   const { colorMode } = useColorMode()
@@ -206,54 +207,15 @@ export default function HomeComponent() {
 
   //const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
 
-  useEffect(() => {
-    const handleKeyboardShortcuts = (e) => {
-      // Handle ESC key for history window first
-      if (e.key === 'Escape' && showHistory) {
-        e.preventDefault()
-        setShowHistory(false)
-        return
-      }
-
-      // If history is open, don't process other shortcuts
-      if (showHistory) {
-        return
-      }
-
-      const isModifierKey = e.metaKey || e.ctrlKey
-
-      // Skip (Next Word) - Cmd/Ctrl + S or Space
-      if ((isModifierKey && e.key === 's') || (e.key === ' ' && !e.target.matches('input'))) {
-        e.preventDefault()
-        nextWord()
-      }
-      // Show/Hide Answer - Cmd/Ctrl + A
-      if (isModifierKey && e.key === 'a') {
-        e.preventDefault()
-        setShowCorrectWord(prev => !prev)
-      }
-      // History - Cmd/Ctrl + H
-      if (isModifierKey && e.key === 'h') {
-        e.preventDefault()
-        setShowHistory(prev => !prev)
-      }
-
-      // Listen shortcut - Cmd/Ctrl + L
-      if (isModifierKey && e.key === 'l') {
-        e.preventDefault()
-        speakWord(currentWord.correct)
-      }
-
-      // Previous Word - Cmd/Ctrl + P
-      if (isModifierKey && e.key === 'p') {
-        e.preventDefault()
-        prevWord()
-      }
-    }
-
-    window.addEventListener('keydown', handleKeyboardShortcuts)
-    return () => window.removeEventListener('keydown', handleKeyboardShortcuts)
-  }, [showHistory, currentWord])
+  useKeyboardShortcuts({
+    showHistory,
+    setShowHistory,
+    nextWord,
+    prevWord,
+    setShowCorrectWord,
+    speakWord,
+    currentWord
+  })
 
   return (
     <ChakraProvider theme={theme}>
@@ -333,7 +295,7 @@ export default function HomeComponent() {
                 color="gray.100"
                 onClick={() => setShowCorrectWord(!showCorrectWord)}
                 leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
-                title="Mac: ⌘ + A | Win: Ctrl + A"
+                title="Mac: ⌘ + O | Win: Ctrl + O"
               >
                 {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
               </Button>

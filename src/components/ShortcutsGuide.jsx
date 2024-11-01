@@ -16,11 +16,10 @@ export const ShortcutsGuide = ({ isOpen, onClose }) => {
   const shortcuts = [
     { key: '⌘/Ctrl + S', description: 'Next word' },
     { key: '⌘/Ctrl + P', description: 'Previous word' },
-    { key: '⌘/Ctrl + A', description: 'Show/Hide answer' },
+    { key: '⌘/Ctrl + O', description: 'Show/Hide answer' },
     { key: '⌘/Ctrl + H', description: 'Show history' },
     { key: '⌘/Ctrl + L', description: 'Listen to pronunciation' },
-    { key: 'Space', description: 'Next word (when not typing)' },
-    { key: 'Enter', description: 'Check answer / Next word' },
+    { key: 'Enter', description: 'Check answer' },
     { key: 'Esc', description: 'Close modals' }
   ]
 

@@ -25,13 +25,13 @@ export const useKeyboardShortcuts = ({
 
       const isModifierKey = e.metaKey || e.ctrlKey
 
-      // Skip (Next Word) - Cmd/Ctrl + S or Space
-      if ((isModifierKey && e.key === 's') || (e.key === ' ' && !e.target.matches('input'))) {
+      // Next Word - Cmd/Ctrl + S
+      if (isModifierKey && e.key === 's') {
         e.preventDefault()
         nextWord()
       }
-      // Show/Hide Answer - Cmd/Ctrl + A
-      if (isModifierKey && e.key === 'a') {
+      // Show/Hide Answer - Cmd/Ctrl + O
+      if (isModifierKey && e.key === 'o') {
         e.preventDefault()
         setShowCorrectWord(prev => !prev)
       }

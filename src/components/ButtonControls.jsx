@@ -35,7 +35,7 @@ export const ButtonControls = ({
                     bg="green.700"
                     _hover={{ bg: "green.600" }}
                     color="gray.100"
-                    title="Mac: ⌘ + S | Win: Ctrl + S | Space"
+                    title="Mac: ⌘ + N | Win: Ctrl + N"
                     flex={1}
                 >
                     <ChevronRight size={16} />
