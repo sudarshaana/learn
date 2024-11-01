@@ -8,14 +8,20 @@ export const StatsDisplay = ({
     totalWords
 }) => {
     return (
-        <Flex width="full" justifyContent="space-between">
-            <Text color="green.400" fontSize="lg">
+        <Flex
+            width="full"
+            justifyContent="space-between"
+            flexDirection={{ base: "column", sm: "row" }}
+            gap={{ base: 2, sm: 0 }}
+            alignItems="center"
+        >
+            <Text color="green.400" fontSize={{ base: "md", md: "lg" }}>
                 Correct: {correctCount}
             </Text>
-            <Text color="red.400" fontSize="lg">
+            <Text color="red.400" fontSize={{ base: "md", md: "lg" }}>
                 Incorrect: {incorrectCount}
             </Text>
-            <Text color="gray.300" fontSize="md">
+            <Text color="gray.300" fontSize={{ base: "sm", md: "md" }}>
                 {currentIndex + 1} of {totalWords}
             </Text>
         </Flex>

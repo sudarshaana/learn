@@ -12,7 +12,7 @@ export const WordDisplay = ({ word, onSpeak, isSpeechSupported }) => {
       key={word.incorrect}
     >
       <Flex
-        fontSize={["2xl", "3xl"]}
+        fontSize={["xl", "2xl", "3xl"]}
         fontWeight="bold"
         textAlign="center"
         color="gray.100"
@@ -22,7 +22,8 @@ export const WordDisplay = ({ word, onSpeak, isSpeechSupported }) => {
         mb={2}
         alignItems="center"
         justifyContent="center"
-        gap={4}
+        gap={3}
+        minHeight={{ base: "60px", md: "80px" }}
       >
         {word.incorrect}
         <Tooltip
@@ -32,7 +33,7 @@ export const WordDisplay = ({ word, onSpeak, isSpeechSupported }) => {
           }
         >
           <Button
-            size="sm"
+            size={{ base: "xs", md: "sm" }}
             variant="ghost"
             color="gray.300"
             _hover={{ color: "gray.100" }}
@@ -43,9 +44,9 @@ export const WordDisplay = ({ word, onSpeak, isSpeechSupported }) => {
             }
           >
             {isSpeechSupported ? (
-              <Volume2 size={20} />
+              <Volume2 size={{ base: 16, md: 20 }} />
             ) : (
-              <VolumeX size={20} />
+              <VolumeX size={{ base: 16, md: 20 }} />
             )}
           </Button>
         </Tooltip>

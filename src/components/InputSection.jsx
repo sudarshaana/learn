@@ -41,7 +41,12 @@ export const InputSection = ({
                 }
                 color="gray.100"
                 textAlign="center"
-                _placeholder={{ color: "gray.400" }}
+                fontSize={{ base: "md", md: "lg" }}
+                height={{ base: "45px", md: "var(--chakra-sizes-10)" }}
+                _placeholder={{
+                    color: "gray.400",
+                    fontSize: { base: "sm", md: "md" }
+                }}
                 _focus={{
                     borderColor: isCorrect === true ? "green.500" :
                         isCorrect === false ? "red.500" :

@@ -219,7 +219,7 @@ export default function HomeComponent() {
 
   return (
     <ChakraProvider theme={theme}>
-      <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" p={4}>
+      <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" p={[2, 4]}>
         {isLoading ? (
           <Flex direction="column" align="center" gap={4}>
             <Spinner size="xl" color="blue.400" />
@@ -228,9 +228,9 @@ export default function HomeComponent() {
         ) : (
           <Box
             width="full"
-            maxWidth={{ base: "95%", md: "md" }}
+            maxWidth={{ base: "100%", md: "md" }}
             mx="auto"
-            p={{ base: 4, md: 6 }}
+            p={{ base: 3, md: 6 }}
             bgGradient={bgGradient}
             borderRadius="lg"
             boxShadow="dark-lg"
@@ -238,7 +238,7 @@ export default function HomeComponent() {
             borderColor="gray.700"
             position="relative"
           >
-            <VStack spacing={4} p={6}>
+            <VStack spacing={[3, 4]} p={[3, 6]}>
               <ProgressBar
                 current={currentWordIndex + 1}
                 total={words.length}
@@ -282,11 +282,17 @@ export default function HomeComponent() {
             </VStack>
 
             <Flex
-              position="absolute"
-              bottom="-50px"
+              position={{ base: "relative", md: "absolute" }}
+              bottom={{ base: "auto", md: "-80px" }}
               left="50%"
               transform="translateX(-50%)"
               gap={2}
+              mt={{ base: 4, md: 8 }}
+              mb={{ base: 2, md: 0 }}
+              flexWrap="wrap"
+              justifyContent="center"
+              width={{ base: "full", md: "auto" }}
+              zIndex={2}
             >
               <Button
                 size="sm"
@@ -324,10 +330,11 @@ export default function HomeComponent() {
                 Shortcuts
               </Button>
             </Flex>
+
             {showCorrectWord && (
               <Flex
-                position="absolute"
-                bottom="-80px"
+                position={{ base: "relative", md: "absolute" }}
+                bottom={{ base: "auto", md: "-120px" }}
                 left="50%"
                 transform="translateX(-50%)"
                 color="gray.300"
@@ -335,6 +342,10 @@ export default function HomeComponent() {
                 fontWeight="bold"
                 alignItems="center"
                 gap={2}
+                mt={{ base: 4, md: 0 }}
+                mb={{ base: 2, md: 0 }}
+                width={{ base: "full", md: "auto" }}
+                justifyContent="center"
               >
                 {currentWord.correct}
                 <Button
