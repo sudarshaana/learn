@@ -102,6 +102,8 @@ export default function HomeComponent() {
     return saved ? JSON.parse(saved) : {}
   })
 
+  const [isEnterPressed, setIsEnterPressed] = useState(false)
+
   useEffect(() => {
     localStorage.setItem('currentWordIndex', currentWordIndex.toString())
   }, [currentWordIndex])
@@ -208,7 +210,9 @@ export default function HomeComponent() {
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
+      setIsEnterPressed(true)
       checkPronunciation()
+      setTimeout(() => setIsEnterPressed(false), 200)
     }
   }
 
@@ -411,6 +415,7 @@ export default function HomeComponent() {
                     onPrev={prevWord}
                     onNext={nextWord}
                     onReset={handleReset}
+                    isEnterPressed={isEnterPressed}
                   />
 
 
