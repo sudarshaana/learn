@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { CheckCircle, XCircle, ChevronRight, RotateCcw, Eye, EyeOff, History, X, Volume2 } from "lucide-react"
+import { CheckCircle, XCircle, ChevronRight, ChevronLeft, RotateCcw, Eye, EyeOff, History, X, Volume2 } from "lucide-react"
 import {
   ChakraProvider,
   extendTheme,
@@ -164,6 +164,18 @@ export default function HomeComponent() {
     setRandomGradient(darkGradientPalettes[Math.floor(Math.random() * darkGradientPalettes.length)])
   }
 
+  const prevWord = () => {
+    setCurrentWordIndex((prevIndex) => {
+      const newIndex = prevIndex - 1
+      return newIndex < 0 ? words.length - 1 : newIndex
+    })
+    setUserInput("")
+    setIsCorrect(null)
+    setHasCountedIncorrect(false)
+    localStorage.setItem('hasCountedIncorrect', 'false')
+    setRandomGradient(darkGradientPalettes[Math.floor(Math.random() * darkGradientPalettes.length)])
+  }
+
   useEffect(() => {
     setUserInput("")
     setIsCorrect(null)
@@ -227,6 +239,12 @@ export default function HomeComponent() {
       if (isModifierKey && e.key === 'l') {
         e.preventDefault()
         speakWord(currentWord.correct)
+      }
+
+      // Previous Word - Cmd/Ctrl + P
+      if (isModifierKey && e.key === 'p') {
+        e.preventDefault()
+        prevWord()
       }
     }
 
@@ -333,15 +351,25 @@ export default function HomeComponent() {
                 </Box>
               )}
             </Flex>
+            <Button
+              onClick={checkPronunciation}
+              width="full"
+              bg="gray.600"
+              _hover={{ bg: "gray.500" }}
+              color="gray.100"
+            >
+              Check
+            </Button>
             <Flex width="full" gap={2}>
               <Button
-                onClick={checkPronunciation}
-                flex={1}
-                bg="gray.700"
-                _hover={{ bg: "gray.600" }}
+                onClick={prevWord}
+                bg="green.700"
+                _hover={{ bg: "green.600" }}
                 color="gray.100"
+                title="Mac: ⌘ + P | Win: Ctrl + P"
+                flex={1}
               >
-                Check
+                <ChevronLeft size={16} />
               </Button>
               <Button
                 onClick={nextWord}
@@ -349,6 +377,7 @@ export default function HomeComponent() {
                 _hover={{ bg: "green.600" }}
                 color="gray.100"
                 title="Mac: ⌘ + S | Win: Ctrl + S | Space"
+                flex={1}
               >
                 <ChevronRight size={16} />
               </Button>
@@ -358,6 +387,8 @@ export default function HomeComponent() {
                 _hover={{ bg: "yellow.600" }}
                 color="yellow.100"
                 aria-label="Reset everything"
+                title="Reset progress"
+                flex={1}
               >
                 <RotateCcw size={16} />
               </Button>
