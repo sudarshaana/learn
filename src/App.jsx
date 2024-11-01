@@ -17,28 +17,27 @@ import {
 import { wordsPromise } from "./data/words.js"
 
 const darkGradientPalettes = [
-  // ["blue.800", "blue.900", "gray.900"],
+  ["blue.800", "blue.900", "gray.900"],
   ["gray.700", "gray.800", "gray.900"],
-  // ["blue.800", "gray.900", "gray.900"],
-  // ["cyan.800", "blue.900", "gray.900"],
-  // ["teal.800", "blue.900", "gray.900"],
-  // ["purple.800", "purple.900", "gray.900"],
-  // ["pink.800", "purple.900", "gray.900"],
-  // ["violet.800", "purple.900", "gray.900"],
-  // ["red.800", "red.900", "gray.900"],
-  // ["orange.800", "red.900", "gray.900"],
-  // ["yellow.800", "orange.900", "gray.900"],
-  // ["teal.800", "cyan.900", "gray.900"],
-  // ["cyan.800", "teal.900", "gray.900"],
-  // ["blue.800", "teal.900", "gray.900"],
-  // ["gray.700", "gray.800", "gray.900"],
-  // ["gray.800", "blue.900", "gray.900"],
-  // ["gray.800", "purple.900", "gray.900"],
-  // ["purple.800", "blue.900", "gray.900"],
-  // ["teal.800", "purple.900", "gray.900"],
-  // ["blue.800", "purple.900", "gray.900"],
-  // ["cyan.800", "purple.900", "gray.900"],
-  // ["violet.800", "blue.900", "gray.900"]
+  ["blue.800", "gray.900", "gray.900"],
+  ["cyan.800", "blue.900", "gray.900"],
+  ["teal.800", "blue.900", "gray.900"],
+  ["purple.800", "purple.900", "gray.900"],
+  ["pink.800", "purple.900", "gray.900"],
+  ["violet.800", "purple.900", "gray.900"],
+  ["orange.800", "red.900", "gray.900"],
+  ["yellow.800", "orange.900", "gray.900"],
+  ["teal.800", "cyan.900", "gray.900"],
+  ["cyan.800", "teal.900", "gray.900"],
+  ["blue.800", "teal.900", "gray.900"],
+  ["gray.700", "gray.800", "gray.900"],
+  ["gray.800", "blue.900", "gray.900"],
+  ["gray.800", "purple.900", "gray.900"],
+  ["purple.800", "blue.900", "gray.900"],
+  ["teal.800", "purple.900", "gray.900"],
+  ["blue.800", "purple.900", "gray.900"],
+  ["cyan.800", "purple.900", "gray.900"],
+  ["violet.800", "blue.900", "gray.900"]
 ]
 
 const theme = extendTheme({
@@ -267,7 +266,7 @@ export default function HomeComponent() {
         >
           <VStack spacing={4} p={6}>
             <Heading as="h1" size="xl" textAlign="center" color="gray.100">
-              Spelling Checker
+              {/* Spelling Checker */}
             </Heading>
             <Text textAlign="center" color="gray.300" fontSize={["sm", "md"]}>
               Type the correct spelling for the word below
