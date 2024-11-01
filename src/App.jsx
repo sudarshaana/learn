@@ -219,10 +219,10 @@ export default function HomeComponent() {
         setShowHistory(prev => !prev)
       }
       // Reset - Cmd/Ctrl + R
-      if (isModifierKey && e.key === 'r') {
-        e.preventDefault()
-        handleReset()
-      }
+      // if (isModifierKey && e.key === 'r') {
+      //   e.preventDefault()
+      //   handleReset()
+      // }
     }
 
     window.addEventListener('keydown', handleKeyboardShortcuts)
@@ -352,7 +352,6 @@ export default function HomeComponent() {
                 _hover={{ bg: "yellow.600" }}
                 color="yellow.100"
                 aria-label="Reset everything"
-                title="Mac: ⌘ + R | Win: Ctrl + R"
               >
                 <RotateCcw size={16} />
               </Button>
@@ -369,66 +368,69 @@ export default function HomeComponent() {
               </Text>
             </Flex>
           </VStack>
-        </Box>
 
-        <Flex
-          position="absolute"
-          bottom="-50px"
-          left="50%"
-          transform="translateX(-50%)"
-          gap={2}
-        >
-          <Button
-            size="sm"
-            bg="gray.700"
-            _hover={{ bg: "gray.600" }}
-            color="gray.100"
-            onClick={() => setShowCorrectWord(!showCorrectWord)}
-            leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
-            title="Mac: ⌘ + A | Win: Ctrl + A"
-          >
-            {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
-          </Button>
-
-          <Button
-            size="sm"
-            bg="gray.700"
-            _hover={{ bg: "gray.600" }}
-            color="gray.100"
-            onClick={() => setShowHistory(!showHistory)}
-            leftIcon={<History size={16} />}
-            title="Mac: ⌘ + H | Win: Ctrl + H"
-          >
-            History
-          </Button>
-        </Flex>
-
-        {showCorrectWord && (
           <Flex
             position="absolute"
-            bottom="-80px"
+            bottom="-50px"
             left="50%"
             transform="translateX(-50%)"
-            color="gray.300"
-            fontSize="lg"
-            fontWeight="bold"
-            alignItems="center"
             gap={2}
           >
-            {currentWord.correct}
             <Button
-              size="xs"
-              variant="ghost"
-              color="gray.400"
-              _hover={{ color: "gray.200" }}
-              onClick={() => speakWord(currentWord.correct)}
-              title="Listen to pronunciation"
-              aria-label="Listen to pronunciation"
+              size="sm"
+              bg="gray.700"
+              _hover={{ bg: "gray.600" }}
+              color="gray.100"
+              onClick={() => setShowCorrectWord(!showCorrectWord)}
+              leftIcon={showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
+              title="Mac: ⌘ + A | Win: Ctrl + A"
             >
-              <Volume2 size={16} />
+              {showCorrectWord ? 'Hide Answer' : 'Show Answer'}
+            </Button>
+
+            <Button
+              size="sm"
+              bg="gray.700"
+              _hover={{ bg: "gray.600" }}
+              color="gray.100"
+              onClick={() => setShowHistory(!showHistory)}
+              leftIcon={<History size={16} />}
+              title="Mac: ⌘ + H | Win: Ctrl + H"
+            >
+              History
             </Button>
           </Flex>
-        )}
+          {showCorrectWord && (
+            <Flex
+              position="absolute"
+              bottom="-80px"
+              left="50%"
+              transform="translateX(-50%)"
+              color="gray.300"
+              fontSize="lg"
+              fontWeight="bold"
+              alignItems="center"
+              gap={2}
+            >
+              {currentWord.correct}
+              <Button
+                size="xs"
+                variant="ghost"
+                color="gray.400"
+                _hover={{ color: "gray.200" }}
+                onClick={() => speakWord(currentWord.correct)}
+                title="Listen to pronunciation"
+                aria-label="Listen to pronunciation"
+              >
+                <Volume2 size={16} />
+              </Button>
+            </Flex>
+          )}
+        </Box>
+
+
+
+
       </Box>
 
       {showHistory && (
