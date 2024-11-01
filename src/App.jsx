@@ -40,7 +40,10 @@ const theme = extendTheme({
 
 export default function HomeComponent() {
   const [words, setWords] = useState([])
-  const [currentWordIndex, setCurrentWordIndex] = useState(0)
+  const [currentWordIndex, setCurrentWordIndex] = useState(() => {
+    const saved = localStorage.getItem('currentWordIndex')
+    return saved ? parseInt(saved, 10) : 0
+  })
   const [userInput, setUserInput] = useState("")
   const [isCorrect, setIsCorrect] = useState(null)
   const [randomGradient, setRandomGradient] = useState(
@@ -51,8 +54,16 @@ export default function HomeComponent() {
   const [hasCountedIncorrect, setHasCountedIncorrect] = useState(false)
 
   useEffect(() => {
+    localStorage.setItem('currentWordIndex', currentWordIndex.toString())
+  }, [currentWordIndex])
+
+  useEffect(() => {
     wordsPromise.then(loadedWords => {
       setWords(loadedWords)
+      const saved = localStorage.getItem('currentWordIndex')
+      if (saved && parseInt(saved, 10) >= loadedWords.length) {
+        setCurrentWordIndex(0)
+      }
     }).catch(error => {
       console.error('Error loading words:', error)
     })
