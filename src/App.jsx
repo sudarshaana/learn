@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Eye, EyeOff, History, Volume2, HelpCircle, Book } from "lucide-react"
+import { Eye, EyeOff, History, Volume2, HelpCircle, Book, BarChart2 } from "lucide-react"
 import {
   ChakraProvider,
   Box,
@@ -30,6 +30,7 @@ import { ShortcutsGuide } from './components/ShortcutsGuide'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { WordSetSelector } from './components/WordSetSelector'
 import { wordSets } from './data/wordSets'
+import { StatsModal } from './components/StatsModal'
 
 export default function HomeComponent() {
   const { colorMode } = useColorMode()
@@ -92,6 +93,12 @@ export default function HomeComponent() {
       return onlySet
     }
     return saved ? JSON.parse(saved) : null
+  })
+
+  const [showStats, setShowStats] = useState(false)
+  const [commonMistakes, setCommonMistakes] = useState(() => {
+    const saved = localStorage.getItem('commonMistakes')
+    return saved ? JSON.parse(saved) : {}
   })
 
   useEffect(() => {
@@ -184,6 +191,13 @@ export default function HomeComponent() {
 
     setWordHistory(newHistory)
     localStorage.setItem('wordHistory', JSON.stringify(newHistory))
+
+    if (!isAnswerCorrect && !hasCountedIncorrect) {
+      const newMistakes = { ...commonMistakes }
+      newMistakes[currentWord.correct] = (newMistakes[currentWord.correct] || 0) + 1
+      setCommonMistakes(newMistakes)
+      localStorage.setItem('commonMistakes', JSON.stringify(newMistakes))
+    }
   }
 
   const handleInputChange = (e) => {
@@ -243,6 +257,8 @@ export default function HomeComponent() {
     localStorage.removeItem('bestStreak')
 
     setRandomGradient(getRandomGradient(colorMode))
+    setCommonMistakes({})
+    localStorage.removeItem('commonMistakes')
   }
 
   useEffect(() => {
@@ -305,6 +321,16 @@ export default function HomeComponent() {
         </Box>
       </ChakraProvider>
     )
+  }
+
+  const stats = {
+    totalAttempts: correctCount + incorrectCount,
+    correctCount,
+    incorrectCount,
+    bestStreak,
+    currentStreak: streak,
+    averageAttempts: (correctCount + incorrectCount) / (Object.keys(commonMistakes).length || 1),
+    commonMistakes
   }
 
   return (
@@ -465,6 +491,21 @@ export default function HomeComponent() {
                     <HelpCircle size={16} />
                   </Button>
 
+                  <Button
+                    size="sm"
+                    bg="gray.700"
+                    _hover={{ bg: "gray.600" }}
+                    color="gray.100"
+                    onClick={() => setShowStats(true)}
+                    title="View Statistics"
+                    aria-label="View Statistics"
+                    width="full"
+                    height="40px"
+                    padding={0}
+                    flex={1}
+                  >
+                    <BarChart2 size={16} />
+                  </Button>
 
                 </Flex>
               </Flex>
@@ -519,6 +560,12 @@ export default function HomeComponent() {
           onClose={() => setShowWordSets(false)}
           onSelect={handleWordSetSelect}
           currentSetId={currentWordSet.id}
+        />
+
+        <StatsModal
+          isOpen={showStats}
+          onClose={() => setShowStats(false)}
+          stats={stats}
         />
       </Box>
     </ChakraProvider>
