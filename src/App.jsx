@@ -12,7 +12,8 @@ import {
   Flex,
   Spinner,
   useToast,
-  IconButton
+  IconButton,
+  useColorMode
 } from "@chakra-ui/react"
 
 import { wordsPromise } from "./data/words.js"
@@ -30,6 +31,7 @@ import { ShortcutsGuide } from './components/ShortcutsGuide'
 import { ThemeToggle } from './components/ThemeToggle'
 
 export default function HomeComponent() {
+  const { colorMode } = useColorMode()
   const [words, setWords] = useState([])
   const [currentWordIndex, setCurrentWordIndex] = useState(() => {
     const saved = localStorage.getItem('currentWordIndex')
@@ -37,7 +39,7 @@ export default function HomeComponent() {
   })
   const [userInput, setUserInput] = useState("")
   const [isCorrect, setIsCorrect] = useState(null)
-  const [randomGradient, setRandomGradient] = useState(getRandomGradient)
+  const [randomGradient, setRandomGradient] = useState(getRandomGradient(colorMode))
   const [correctCount, setCorrectCount] = useState(() => {
     const saved = localStorage.getItem('correctCount')
     return saved ? parseInt(saved, 10) : 0
@@ -157,7 +159,7 @@ export default function HomeComponent() {
     setIsCorrect(null)
     setHasCountedIncorrect(false)
     localStorage.setItem('hasCountedIncorrect', 'false')
-    setRandomGradient(getRandomGradient())
+    setRandomGradient(getRandomGradient(colorMode))
   }
 
   const prevWord = () => {
@@ -169,7 +171,7 @@ export default function HomeComponent() {
     setIsCorrect(null)
     setHasCountedIncorrect(false)
     localStorage.setItem('hasCountedIncorrect', 'false')
-    setRandomGradient(getRandomGradient())
+    setRandomGradient(getRandomGradient(colorMode))
   }
 
   useEffect(() => {
@@ -192,8 +194,12 @@ export default function HomeComponent() {
     localStorage.removeItem('hasCountedIncorrect')
     localStorage.removeItem('wordHistory')
 
-    setRandomGradient(getRandomGradient())
+    setRandomGradient(getRandomGradient(colorMode))
   }
+
+  useEffect(() => {
+    setRandomGradient(getRandomGradient(colorMode))
+  }, [colorMode])
 
   const bgGradient = `linear(to-br, ${randomGradient.join(', ')})`
 
