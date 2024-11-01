@@ -12,7 +12,6 @@ import {
   Flex,
   Spinner,
   useToast,
-  IconButton,
   useColorMode
 } from "@chakra-ui/react"
 
@@ -28,7 +27,6 @@ import { getRandomGradient } from './styles/gradients'
 import { ProgressBar } from './components/ProgressBar'
 import { StreakCounter } from './components/StreakCounter'
 import { ShortcutsGuide } from './components/ShortcutsGuide'
-import { ThemeToggle } from './components/ThemeToggle'
 
 export default function HomeComponent() {
   const { colorMode } = useColorMode()
@@ -259,20 +257,6 @@ export default function HomeComponent() {
 
   return (
     <ChakraProvider theme={theme}>
-      <ThemeToggle />
-
-      <IconButton
-        position="fixed"
-        top={4}
-        left={4}
-        icon={<HelpCircle size={20} />}
-        onClick={() => setShowShortcuts(true)}
-        variant="ghost"
-        color="gray.400"
-        _hover={{ color: "gray.100" }}
-        aria-label="Show keyboard shortcuts"
-      />
-
       <Box minHeight="100vh" display="flex" alignItems="center" justifyContent="center" p={4}>
         {isLoading ? (
           <Flex direction="column" align="center" gap={4}>
@@ -364,6 +348,18 @@ export default function HomeComponent() {
                 title="Mac: ⌘ + H | Win: Ctrl + H"
               >
                 History
+              </Button>
+
+              <Button
+                size="sm"
+                bg="gray.700"
+                _hover={{ bg: "gray.600" }}
+                color="gray.100"
+                onClick={() => setShowShortcuts(true)}
+                leftIcon={<HelpCircle size={16} />}
+                title="Show keyboard shortcuts"
+              >
+                Shortcuts
               </Button>
             </Flex>
             {showCorrectWord && (
