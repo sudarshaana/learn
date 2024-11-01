@@ -12,7 +12,8 @@ import {
   Flex,
   Spinner,
   useToast,
-  useColorMode
+  useColorMode,
+  Link
 } from "@chakra-ui/react"
 import Papa from 'papaparse'
 
@@ -338,240 +339,284 @@ export default function HomeComponent() {
       <Box
         minHeight="100vh"
         display="flex"
-        alignItems="center"
-        justifyContent="center"
-        p={{ base: 0, md: 4 }}
+        flexDirection="column"
+        position="relative"
       >
-        {isLoading ? (
-          <Flex direction="column" align="center" gap={4}>
-            <Spinner size="xl" color="blue.400" />
-            <Text color="gray.400">Loading words...</Text>
-          </Flex>
-        ) : (
-          <Box
-            width="full"
-            maxWidth={{ base: "100%", md: "500px" }}
-            mx="auto"
-            position="relative"
-            height={{ base: "100vh", md: "auto" }}
-          >
+        <Box
+          flex="1"
+          display="flex"
+          alignItems={{ base: "center", md: "flex-start" }}
+          justifyContent="center"
+          p={{ base: 0, md: 4 }}
+          minHeight="100vh"
+          pt={{ base: 0, md: 8 }}
+        >
+          {isLoading ? (
+            <Flex direction="column" align="center" gap={4}>
+              <Spinner size="xl" color="blue.400" />
+              <Text color="gray.400">Loading words...</Text>
+            </Flex>
+          ) : (
             <Box
-              p={{ base: 4, md: 6 }}
-              bgGradient={bgGradient}
-              borderRadius={{ base: 0, md: "lg" }}
-              boxShadow={{ base: "none", md: "dark-lg" }}
-              borderWidth={{ base: 0, md: 1 }}
-              borderColor="gray.700"
+              width="full"
+              maxWidth={{ base: "100%", md: "500px" }}
+              mx="auto"
               position="relative"
-              height={{ base: "100%", md: "auto" }}
-              display="flex"
-              flexDirection="column"
+              height={{ base: "100vh", md: "auto" }}
+              pb={{ base: "100px", md: 0 }}
             >
-              <Box top="-2px" width='full'>
-                <ProgressBar
-                  current={currentWordIndex + 1}
-                  total={words.length}
-                />
-              </Box>
-              <StatsDisplay
-                correctCount={correctCount}
-                incorrectCount={incorrectCount}
-                currentIndex={currentWordIndex}
-                totalWords={words.length}
-                streak={streak}
-                bestStreak={bestStreak}
-              />
-
-              <VStack spacing={[3, 4]} pt={12}>
-
-                <WordDisplay
-                  word={currentWord}
-                  onSpeak={speakWord}
-                />
-
-                <InputSection
-                  userInput={userInput}
-                  onInputChange={handleInputChange}
-                  onKeyDown={handleKeyDown}
-                  isCorrect={isCorrect}
-                />
-
-                <ButtonControls
-                  onCheck={checkPronunciation}
-                  onPrev={prevWord}
-                  onNext={nextWord}
-                  onReset={handleReset}
-                />
-
-
-              </VStack>
-
-
-              <Flex
-                position={{ base: "relative", md: "absolute" }}
-                bottom={{ base: "auto", md: "-70px" }}
-                left="50%"
-                transform="translateX(-50%)"
-                mt={{ base: 4, md: 8 }}
-                mb={{ base: 2, md: 0 }}
-                alignItems="center"
-                width={{ base: "full", md: "100%" }}
-                maxWidth={{ base: "full", md: "500px" }}
-                zIndex={2}
-                bg="whiteAlpha.50"
-                borderRadius="lg"
-                p={2}
+              <Box
+                p={{ base: 4, md: 6 }}
+                bgGradient={bgGradient}
+                borderRadius={{ base: 0, md: "lg" }}
+                boxShadow={{ base: "none", md: "dark-lg" }}
+                borderWidth={{ base: 0, md: 1 }}
+                borderColor="gray.700"
+                position="relative"
+                height={{ base: "100%", md: "auto" }}
+                display="flex"
+                flexDirection="column"
               >
-                <Flex
-                  gap={2}
-                  justifyContent="center"
-                  width="full"
-                >
-                  {/* Show Answer Button */}
-                  <Button
-                    size="sm"
-                    // bg="gray.700"
-                    _hover={{ bg: "gray.600" }}
-                    color={showCorrectWord ? "red.400" : "green.500"}
-                    onClick={() => setShowCorrectWord(!showCorrectWord)}
-                    title="Show/Hide Answer (Mac: ⌘ + O | Win: Ctrl + O)"
-                    aria-label="Show/Hide Answer"
-                    width="full"
-                    height="40px"
-                    padding={0}
-                    flex={1}
-                  >
-                    {showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
-                  </Button>
+                <Box top="-2px" width='full'>
+                  <ProgressBar
+                    current={currentWordIndex + 1}
+                    total={words.length}
+                  />
+                </Box>
+                <StatsDisplay
+                  correctCount={correctCount}
+                  incorrectCount={incorrectCount}
+                  currentIndex={currentWordIndex}
+                  totalWords={words.length}
+                  streak={streak}
+                  bestStreak={bestStreak}
+                />
 
-                  {/* History Button */}
-                  <Button
-                    size="sm"
-                    // bg="gray.700"
-                    _hover={{ bg: "gray.600" }}
-                    color="purple.500"
-                    onClick={() => setShowHistory(!showHistory)}
-                    title="History (Mac: ⌘ + H | Win: Ctrl + H)"
-                    aria-label="View History"
-                    width="full"
-                    height="40px"
-                    padding={0}
-                    flex={1}
-                  >
-                    <History size={16} />
-                  </Button>
+                <VStack spacing={[3, 4]} pt={12}>
 
-                  {/* Stats Button */}
-                  <Button
-                    size="sm"
-                    // bg="gray.700"
-                    _hover={{ bg: "gray.600" }}
-                    color="blue.500"
-                    onClick={() => setShowStats(true)}
-                    title="View Statistics"
-                    aria-label="View Statistics"
-                    width="full"
-                    height="40px"
-                    padding={0}
-                    flex={1}
-                  >
-                    <BarChart2 size={16} />
-                  </Button>
+                  <WordDisplay
+                    word={currentWord}
+                    onSpeak={speakWord}
+                  />
 
-                  {/* Words Button */}
-                  <Button
-                    size="sm"
-                    // bg="gray.700"
-                    _hover={{ bg: "gray.600" }}
-                    color="teal.500"
-                    onClick={() => setShowWordSets(true)}
-                    title="Select Word Set"
-                    aria-label="Select Word Set"
-                    width="full"
-                    height="40px"
-                    padding={0}
-                    flex={1}
-                  >
-                    <Book size={16} />
-                  </Button>
+                  <InputSection
+                    userInput={userInput}
+                    onInputChange={handleInputChange}
+                    onKeyDown={handleKeyDown}
+                    isCorrect={isCorrect}
+                  />
 
-                  {/* Shortcuts Button */}
-                  <Button
-                    size="sm"
-                    // bg="gray.700"
-                    _hover={{ bg: "gray.600" }}
-                    color="gray.500"
-                    onClick={() => setShowShortcuts(true)}
-                    title="Keyboard Shortcuts"
-                    aria-label="Show Keyboard Shortcuts"
-                    width="full"
-                    height="40px"
-                    padding={0}
-                    flex={1}
-                  >
-                    <HelpCircle size={16} />
-                  </Button>
+                  <ButtonControls
+                    onCheck={checkPronunciation}
+                    onPrev={prevWord}
+                    onNext={nextWord}
+                    onReset={handleReset}
+                  />
 
-                </Flex>
-              </Flex>
 
-              {showCorrectWord && (
+                </VStack>
+
+
                 <Flex
                   position={{ base: "relative", md: "absolute" }}
-                  bottom={{ base: "auto", md: "-120px" }}
+                  bottom={{ base: "auto", md: "-70px" }}
                   left="50%"
                   transform="translateX(-50%)"
-                  color="gray.300"
-                  fontSize="lg"
-                  fontWeight="bold"
-                  alignItems="center"
-                  gap={2}
-                  mt={{ base: 4, md: 0 }}
+                  mt={{ base: 4, md: 8 }}
                   mb={{ base: 2, md: 0 }}
-                  width={{ base: "full", md: "auto" }}
-                  justifyContent="center"
+                  alignItems="center"
+                  width={{ base: "full", md: "100%" }}
+                  maxWidth={{ base: "full", md: "500px" }}
+                  zIndex={2}
+                  bg="whiteAlpha.50"
+                  borderRadius="lg"
+                  p={2}
                 >
-                  {currentWord.correct}
-                  <Button
-                    size="xs"
-                    variant="ghost"
-                    color="gray.400"
-                    _hover={{ color: "gray.200" }}
-                    onClick={() => speakWord(currentWord.correct)}
-                    title="Listen to pronunciation"
-                    aria-label="Listen to pronunciation"
+                  <Flex
+                    gap={2}
+                    justifyContent="center"
+                    width="full"
                   >
-                    <Volume2 size={16} />
-                  </Button>
+                    {/* Show Answer Button */}
+                    <Button
+                      size="sm"
+                      // bg="gray.700"
+                      _hover={{ bg: "gray.600" }}
+                      color={showCorrectWord ? "red.400" : "green.500"}
+                      onClick={() => setShowCorrectWord(!showCorrectWord)}
+                      title="Show/Hide Answer (Mac: ⌘ + O | Win: Ctrl + O)"
+                      aria-label="Show/Hide Answer"
+                      width="full"
+                      height="40px"
+                      padding={0}
+                      flex={1}
+                    >
+                      {showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
+                    </Button>
+
+                    {/* History Button */}
+                    <Button
+                      size="sm"
+                      // bg="gray.700"
+                      _hover={{ bg: "gray.600" }}
+                      color="purple.500"
+                      onClick={() => setShowHistory(!showHistory)}
+                      title="History (Mac: ⌘ + H | Win: Ctrl + H)"
+                      aria-label="View History"
+                      width="full"
+                      height="40px"
+                      padding={0}
+                      flex={1}
+                    >
+                      <History size={16} />
+                    </Button>
+
+                    {/* Stats Button */}
+                    <Button
+                      size="sm"
+                      // bg="gray.700"
+                      _hover={{ bg: "gray.600" }}
+                      color="blue.500"
+                      onClick={() => setShowStats(true)}
+                      title="View Statistics"
+                      aria-label="View Statistics"
+                      width="full"
+                      height="40px"
+                      padding={0}
+                      flex={1}
+                    >
+                      <BarChart2 size={16} />
+                    </Button>
+
+                    {/* Words Button */}
+                    <Button
+                      size="sm"
+                      // bg="gray.700"
+                      _hover={{ bg: "gray.600" }}
+                      color="teal.500"
+                      onClick={() => setShowWordSets(true)}
+                      title="Select Word Set"
+                      aria-label="Select Word Set"
+                      width="full"
+                      height="40px"
+                      padding={0}
+                      flex={1}
+                    >
+                      <Book size={16} />
+                    </Button>
+
+                    {/* Shortcuts Button */}
+                    <Button
+                      size="sm"
+                      // bg="gray.700"
+                      _hover={{ bg: "gray.600" }}
+                      color="gray.500"
+                      onClick={() => setShowShortcuts(true)}
+                      title="Keyboard Shortcuts"
+                      aria-label="Show Keyboard Shortcuts"
+                      width="full"
+                      height="40px"
+                      padding={0}
+                      flex={1}
+                    >
+                      <HelpCircle size={16} />
+                    </Button>
+
+                  </Flex>
                 </Flex>
-              )}
+
+                {showCorrectWord && (
+                  <Flex
+                    position={{ base: "relative", md: "absolute" }}
+                    bottom={{ base: "auto", md: "-120px" }}
+                    left="50%"
+                    transform="translateX(-50%)"
+                    color="gray.300"
+                    fontSize="lg"
+                    fontWeight="bold"
+                    alignItems="center"
+                    gap={2}
+                    mt={{ base: 4, md: 0 }}
+                    mb={{ base: 2, md: 0 }}
+                    width={{ base: "full", md: "auto" }}
+                    justifyContent="center"
+                  >
+                    {currentWord.correct}
+                    <Button
+                      size="xs"
+                      variant="ghost"
+                      color="gray.400"
+                      _hover={{ color: "gray.200" }}
+                      onClick={() => speakWord(currentWord.correct)}
+                      title="Listen to pronunciation"
+                      aria-label="Listen to pronunciation"
+                    >
+                      <Volume2 size={16} />
+                    </Button>
+                  </Flex>
+                )}
+              </Box>
+
+              <Box
+                height={{ base: "40px", md: "0" }}  // Height for mobile only
+                display={{ base: "block", md: "none" }}  // Only show on mobile
+                aria-hidden="true"  // For accessibility
+              />
             </Box>
-          </Box>
-        )}
+          )}
 
-        <ShortcutsGuide
-          isOpen={showShortcuts}
-          onClose={() => setShowShortcuts(false)}
-        />
+          <ShortcutsGuide
+            isOpen={showShortcuts}
+            onClose={() => setShowShortcuts(false)}
+          />
 
-        <HistoryModal
-          isOpen={showHistory}
-          onClose={() => setShowHistory(false)}
-          history={wordHistory}
-        />
+          <HistoryModal
+            isOpen={showHistory}
+            onClose={() => setShowHistory(false)}
+            history={wordHistory}
+          />
 
-        <WordSetSelector
-          isOpen={showWordSets}
-          onClose={() => setShowWordSets(false)}
-          onSelect={handleWordSetSelect}
-          currentSetId={currentWordSet.id}
-        />
+          <WordSetSelector
+            isOpen={showWordSets}
+            onClose={() => setShowWordSets(false)}
+            onSelect={handleWordSetSelect}
+            currentSetId={currentWordSet.id}
+          />
 
-        <StatsModal
-          isOpen={showStats}
-          onClose={() => setShowStats(false)}
-          stats={stats}
-        />
+          <StatsModal
+            isOpen={showStats}
+            onClose={() => setShowStats(false)}
+            stats={stats}
+          />
+
+        </Box>
+        {/* Footer */}
+        <Box
+          position="fixed"
+          bottom={0}
+          left={0}
+          right={0}
+          p={2}
+          textAlign="center"
+          bg="whiteAlpha.50"
+          backdropFilter="blur(5px)"
+          borderTop="1px solid"
+          borderColor="whiteAlpha.100"
+          zIndex={1}  // Lower z-index than buttons
+        >
+          <Text fontSize="sm" color="gray.400">
+            Developed by{" "}
+            <Link
+              href="https://www.linkedin.com/in/sudarshaana/"
+              target="_blank"
+              rel="noopener noreferrer"
+              color="blue.400"
+              _hover={{ color: "blue.300", textDecoration: "none" }}
+            >
+              @sudarshaana
+            </Link>
+          </Text>
+        </Box>
       </Box>
     </ChakraProvider>
   )
