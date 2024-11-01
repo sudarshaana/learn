@@ -1,15 +1,13 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { CheckCircle, XCircle, ChevronRight, ChevronLeft, RotateCcw, Eye, EyeOff, History, X, Volume2 } from "lucide-react"
+import {  Eye, EyeOff, History, Volume2 } from "lucide-react"
 import {
   ChakraProvider,
-  extendTheme,
   Box,
   VStack,
   Heading,
   Text,
-  Input,
   Button,
   Flex
 } from "@chakra-ui/react"
@@ -171,7 +169,7 @@ export default function HomeComponent() {
 
   const bgGradient = `linear(to-br, ${randomGradient.join(', ')})`
 
-  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
+  //const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
 
   useEffect(() => {
     const handleKeyboardShortcuts = (e) => {
