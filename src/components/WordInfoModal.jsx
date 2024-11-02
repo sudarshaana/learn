@@ -38,7 +38,7 @@ export const WordInfoModal = ({ isOpen, onClose, word, wordDetails, isLoading })
           borderBottom="1px solid"
           borderColor="gray.700"
         >
-          Word Details: {word}
+          {word}
         </ModalHeader>
         <ModalCloseButton color="gray.400" />
         <ModalBody py={6}>
@@ -51,20 +51,31 @@ export const WordInfoModal = ({ isOpen, onClose, word, wordDetails, isLoading })
             </Center>
           ) : wordDetails && wordDetails[0] ? (
             <VStack align="stretch" spacing={4}>
-              {wordDetails[0].phonetic && (
+              {wordDetails[0].meanings[0]?.definitions[0] && (
                 <Box
-                  p={3}
+                  p={4}
                   bg="whiteAlpha.50"
                   borderRadius="md"
-                  textAlign="center"
                 >
-                  <Text color="gray.300">
-                    {wordDetails[0].phonetic}
+                  <Text color="gray.300" fontSize="md">
+                    {wordDetails[0].meanings[0].definitions[0].definition}
                   </Text>
                 </Box>
               )}
 
-              <Accordion allowMultiple>
+              {wordDetails[0].phonetic && (
+                <Text color="gray.400" fontSize="sm" textAlign="center">
+                  {wordDetails[0].phonetic}
+                </Text>
+              )}
+
+              <Accordion
+                allowMultiple
+                defaultIndex={Array.from(
+                  { length: wordDetails[0].meanings.length },
+                  (_, i) => i
+                )}
+              >
                 {wordDetails[0].meanings.map((meaning, index) => (
                   <AccordionItem
                     key={index}
@@ -90,7 +101,7 @@ export const WordInfoModal = ({ isOpen, onClose, word, wordDetails, isLoading })
                             </Text>
                             {def.example && (
                               <Text color="gray.500" fontSize="sm" pl={4} mt={1}>
-                                "{def.example}"
+                                Example: {def.example}
                               </Text>
                             )}
                           </Box>
