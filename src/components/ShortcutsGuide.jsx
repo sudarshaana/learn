@@ -70,8 +70,10 @@ export const ShortcutsGuide = ({ isOpen, onClose }) => {
         my={{ base: 0, md: 4 }}
         boxShadow="none"
         maxHeight={{ base: "100vh", md: "90vh" }}
+        height={{ base: "100vh", md: "auto" }}
         display="flex"
         flexDirection="column"
+        position="relative"
       >
         <Box
           bgGradient="linear(to-br, gray.800, gray.900)"
@@ -79,25 +81,42 @@ export const ShortcutsGuide = ({ isOpen, onClose }) => {
           overflow="hidden"
           borderWidth={1}
           borderColor="whiteAlpha.200"
-          flex={1}
+          height="full"
           display="flex"
           flexDirection="column"
+          position="relative"
+          mt={30}
         >
-          <ModalHeader
+          {/* Fixed Header */}
+          <Box
             bgGradient="linear(to-r, cyan.400, blue.400)"
-            color="white"
-            fontSize="2xl"
-            py={4}
-            flexShrink={0}
-            textAlign="center"
-            letterSpacing="wide"
+            borderTopRadius="xl"
+            position="absolute"
+            top={0}
+            left={0}
+            right={0}
+            zIndex={10}
+            borderBottom="1px solid"
+            borderColor="whiteAlpha.200"
           >
-            Help Guide
-          </ModalHeader>
-          <ModalCloseButton color="white" />
-          <ModalBody
-            py={6}
+            <ModalHeader
+              color="white"
+              fontSize="2xl"
+              py={4}
+              textAlign="center"
+              letterSpacing="wide"
+            >
+              Help Guide
+            </ModalHeader>
+            <ModalCloseButton color="white" />
+          </Box>
+
+          {/* Scrollable Content with top padding for header */}
+          <Box
+            flex={1}
             overflowY="auto"
+            pt="80px"
+
             css={{
               '&::-webkit-scrollbar': { width: '4px' },
               '&::-webkit-scrollbar-track': { background: 'transparent' },
@@ -110,90 +129,92 @@ export const ShortcutsGuide = ({ isOpen, onClose }) => {
               },
             }}
           >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3 }}
-            >
-              <VStack spacing={6} align="stretch">
-                {/* Button Icons Section */}
-                <Box>
-                  <Text
-                    color="gray.300"
-                    fontSize="lg"
-                    fontWeight="medium"
-                    mb={4}
-                  >
-                    Button Guide
-                  </Text>
-                  <VStack spacing={3} align="stretch">
-                    {buttonHelp.map((item, index) => (
-                      <Box
-                        key={index}
-                        bg="whiteAlpha.50"
-                        p={3}
-                        borderRadius="md"
-                      >
-                        <HStack spacing={3}>
-                          <Box
-                            bg="whiteAlpha.100"
-                            p={2}
-                            borderRadius="md"
-                            color={item.color}
-                          >
-                            {item.icon}
-                          </Box>
-                          <Text color="gray.300" fontSize="sm">
-                            {item.description}
-                          </Text>
-                        </HStack>
-                      </Box>
-                    ))}
-                  </VStack>
-                </Box>
+            <ModalBody py={6}>
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <VStack spacing={6} align="stretch">
+                  {/* Button Icons Section */}
+                  <Box>
+                    <Text
+                      color="gray.300"
+                      fontSize="lg"
+                      fontWeight="medium"
+                      mb={4}
+                    >
+                      Button Guide
+                    </Text>
+                    <VStack spacing={3} align="stretch">
+                      {buttonHelp.map((item, index) => (
+                        <Box
+                          key={index}
+                          bg="whiteAlpha.50"
+                          p={3}
+                          borderRadius="md"
+                        >
+                          <HStack spacing={3}>
+                            <Box
+                              bg="whiteAlpha.100"
+                              p={2}
+                              borderRadius="md"
+                              color={item.color}
+                            >
+                              {item.icon}
+                            </Box>
+                            <Text color="gray.300" fontSize="sm">
+                              {item.description}
+                            </Text>
+                          </HStack>
+                        </Box>
+                      ))}
+                    </VStack>
+                  </Box>
 
-                <Divider borderColor="gray.700" />
+                  <Divider borderColor="gray.700" />
 
-                {/* Keyboard Shortcuts Section */}
-                <Box>
-                  <Text
-                    color="gray.300"
-                    fontSize="lg"
-                    fontWeight="medium"
-                    mb={4}
-                  >
-                    Keyboard Shortcuts
-                  </Text>
-                  <Table variant="simple">
-                    <Tbody>
-                      {shortcuts.map(({ key, description }) => (
-                        <Tr key={key}>
-                          <Td border="none" py={3}>
-                            <Badge
-                              colorScheme="blue"
-                              px={3}
-                              py={1}
-                              borderRadius="full"
+                  {/* Keyboard Shortcuts Section */}
+                  <Box>
+                    <Text
+                      color="gray.300"
+                      fontSize="lg"
+                      fontWeight="medium"
+                      mb={4}
+                    >
+                      Keyboard Shortcuts
+                    </Text>
+                    <Table variant="simple">
+                      <Tbody>
+                        {shortcuts.map(({ key, description }) => (
+                          <Tr key={key}>
+                            <Td border="none" py={3}>
+                              <Badge
+                                colorScheme="blue"
+                                px={3}
+                                py={1}
+                                borderRadius="full"
+                                fontSize="sm"
+                              >
+                                {key}
+                              </Badge>
+                            </Td>
+                            <Td
+                              border="none"
+                              color="gray.300"
                               fontSize="sm"
                             >
-                              {key}
-                            </Badge>
-                          </Td>
-                          <Td
-                            border="none"
-                            color="gray.300"
-                            fontSize="sm"
-                          >
-                            {description}
-                          </Td>
-                        </Tr>
-                      ))}
-                    </Tbody>
-                  </Table>
-                </Box>
-              </VStack>
-            </motion.div>
-          </ModalBody>
+                              {description}
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </Box>
+                </VStack>
+              </motion.div>
+            </ModalBody>
+          </Box>
         </Box>
       </ModalContent>
     </Modal>

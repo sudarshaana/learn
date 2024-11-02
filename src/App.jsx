@@ -485,6 +485,7 @@ export default function HomeComponent() {
         display="flex"
         flexDirection="column"
         position="relative"
+        pt={{ base: 4, md: 8 }}
       >
         <Box
           flex="1"
@@ -797,7 +798,7 @@ export default function HomeComponent() {
           backdropFilter="blur(5px)"
           borderTop="1px solid"
           borderColor="whiteAlpha.100"
-          zIndex={1}  // Lower z-index than buttons
+          zIndex={1}
         >
           <Text fontSize="sm" color="gray.400">
             Developed by{" "}
