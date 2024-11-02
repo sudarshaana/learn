@@ -10,8 +10,24 @@ import {
   Tr,
   Td,
   Badge,
-  Box
+  Box,
+  Divider,
+  VStack,
+  HStack,
+  Text
 } from "@chakra-ui/react"
+import {
+  ChevronLeft,
+  ChevronRight,
+  Eye,
+  Info,
+  Shuffle,
+  History,
+  BarChart2,
+  Book,
+  RotateCcw,
+  HelpCircle
+} from "lucide-react"
 import PropTypes from 'prop-types'
 import { motion } from "framer-motion"
 
@@ -25,6 +41,19 @@ export const ShortcutsGuide = ({ isOpen, onClose }) => {
     { key: '⌘/Ctrl + U', description: 'Toggle Random Mode' },
     { key: 'Enter', description: 'Check answer' },
     { key: 'Esc', description: 'Close modals' }
+  ]
+
+  const buttonHelp = [
+    { icon: <ChevronLeft size={16} />, color: "gray.300", description: "Go to previous word" },
+    { icon: <ChevronRight size={16} />, color: "gray.300", description: "Go to next word" },
+    { icon: <Eye size={16} />, color: "green.400", description: "Show/Hide the correct spelling" },
+    { icon: <Info size={16} />, color: "blue.300", description: "View word details and meanings" },
+    { icon: <Shuffle size={16} />, color: "yellow.400", description: "Toggle random word order" },
+    { icon: <History size={16} />, color: "purple.500", description: "View your attempt history" },
+    { icon: <BarChart2 size={16} />, color: "blue.500", description: "View your statistics" },
+    { icon: <Book size={16} />, color: "teal.500", description: "Select word set" },
+    { icon: <RotateCcw size={16} />, color: "red.400", description: "Reset all progress" },
+    { icon: <HelpCircle size={16} />, color: "gray.500", description: "Show this help guide" }
   ]
 
   return (
@@ -63,7 +92,7 @@ export const ShortcutsGuide = ({ isOpen, onClose }) => {
             textAlign="center"
             letterSpacing="wide"
           >
-            Keyboard Shortcuts
+            Help Guide
           </ModalHeader>
           <ModalCloseButton color="white" />
           <ModalBody
@@ -86,32 +115,83 @@ export const ShortcutsGuide = ({ isOpen, onClose }) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <Table variant="simple">
-                <Tbody>
-                  {shortcuts.map(({ key, description }) => (
-                    <Tr key={key}>
-                      <Td border="none" py={3}>
-                        <Badge
-                          colorScheme="blue"
-                          px={3}
-                          py={1}
-                          borderRadius="full"
-                          fontSize="sm"
-                        >
-                          {key}
-                        </Badge>
-                      </Td>
-                      <Td
-                        border="none"
-                        color="gray.300"
-                        fontSize="sm"
+              <VStack spacing={6} align="stretch">
+                {/* Button Icons Section */}
+                <Box>
+                  <Text
+                    color="gray.300"
+                    fontSize="lg"
+                    fontWeight="medium"
+                    mb={4}
+                  >
+                    Button Guide
+                  </Text>
+                  <VStack spacing={3} align="stretch">
+                    {buttonHelp.map((item, index) => (
+                      <Box
+                        key={index}
+                        bg="whiteAlpha.50"
+                        p={3}
+                        borderRadius="md"
                       >
-                        {description}
-                      </Td>
-                    </Tr>
-                  ))}
-                </Tbody>
-              </Table>
+                        <HStack spacing={3}>
+                          <Box
+                            bg="whiteAlpha.100"
+                            p={2}
+                            borderRadius="md"
+                            color={item.color}
+                          >
+                            {item.icon}
+                          </Box>
+                          <Text color="gray.300" fontSize="sm">
+                            {item.description}
+                          </Text>
+                        </HStack>
+                      </Box>
+                    ))}
+                  </VStack>
+                </Box>
+
+                <Divider borderColor="gray.700" />
+
+                {/* Keyboard Shortcuts Section */}
+                <Box>
+                  <Text
+                    color="gray.300"
+                    fontSize="lg"
+                    fontWeight="medium"
+                    mb={4}
+                  >
+                    Keyboard Shortcuts
+                  </Text>
+                  <Table variant="simple">
+                    <Tbody>
+                      {shortcuts.map(({ key, description }) => (
+                        <Tr key={key}>
+                          <Td border="none" py={3}>
+                            <Badge
+                              colorScheme="blue"
+                              px={3}
+                              py={1}
+                              borderRadius="full"
+                              fontSize="sm"
+                            >
+                              {key}
+                            </Badge>
+                          </Td>
+                          <Td
+                            border="none"
+                            color="gray.300"
+                            fontSize="sm"
+                          >
+                            {description}
+                          </Td>
+                        </Tr>
+                      ))}
+                    </Tbody>
+                  </Table>
+                </Box>
+              </VStack>
             </motion.div>
           </ModalBody>
         </Box>
