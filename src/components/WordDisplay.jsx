@@ -6,6 +6,19 @@ import { motion } from "framer-motion"
 export const WordDisplay = ({ word, onSpeak }) => {
     const isSpeechSupported = 'speechSynthesis' in window
 
+    // Function to determine font size based on word length
+    const getFontSize = (word) => {
+        const length = word.length
+        if (length > 20) {
+            return ["md", "lg", "xl"]
+        } else if (length > 15) {
+            return ["lg", "xl", "2xl"]
+        } else if (length > 10) {
+            return ["xl", "2xl", "3xl"]
+        }
+        return ["2xl", "3xl", "4xl"] // default size for short words
+    }
+
     return (
         <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -22,11 +35,10 @@ export const WordDisplay = ({ word, onSpeak }) => {
                 mb={{ base: 4, md: 12 }}
                 px={{ base: 3, md: 6 }}
             >
-
                 <Box
                     width="full"
                     bg="whiteAlpha.100"
-                    // backdropFilter="blur(8px)"
+                    backdropFilter="blur(8px)"
                     borderRadius="xl"
                     px={6}
                     py={5}
@@ -41,7 +53,7 @@ export const WordDisplay = ({ word, onSpeak }) => {
                         gap={3}
                     >
                         <Text
-                            fontSize={["xl", "2xl", "3xl"]}
+                            fontSize={getFontSize(word.incorrect)}
                             fontWeight="bold"
                             color="gray.100"
                             textAlign="center"
