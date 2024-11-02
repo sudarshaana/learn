@@ -38,7 +38,7 @@ import { useWordDetails } from './hooks/useWordDetails'
 import { WordInfoModal } from './components/WordInfoModal'
 import { ResetConfirmationModal } from './components/ResetConfirmationModal'
 
-const correctSound = new Audio('https://cdn.freesound.org/sounds/607/607926-c6d5de58-0b53-44b2-846e-af11a36c93cd?filename=607926__robinhood76__10661-bonus-correct-answer.wav')
+const correctSound = new Audio('https://raw.githubusercontent.com/sudarshaana/learn/refs/heads/main/public/sounds/correct-answer.mp3')
 
 export default function HomeComponent() {
   const { colorMode } = useColorMode()
