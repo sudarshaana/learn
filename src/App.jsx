@@ -114,9 +114,38 @@ export default function HomeComponent() {
   // Add state to track used indices in shuffle mode
   const [usedShuffleIndices, setUsedShuffleIndices] = useState([])
 
+  // Add new state for tracking modal history
+  const [modalHistory, setModalHistory] = useState([])
+
   useEffect(() => {
     localStorage.setItem('currentWordIndex', currentWordIndex.toString())
   }, [currentWordIndex])
+
+  useEffect(() => {
+    const handlePopState = () => {
+      if (modalHistory.length > 0) {
+        const lastModal = modalHistory[modalHistory.length - 1]
+        switch (lastModal) {
+          case 'history':
+            setShowHistory(false)
+            break
+          case 'shortcuts':
+            setShowShortcuts(false)
+            break
+          case 'wordsets':
+            setShowWordSets(false)
+            break
+          case 'stats':
+            setShowStats(false)
+            break
+        }
+        setModalHistory(prev => prev.slice(0, -1))
+      }
+    }
+
+    window.addEventListener('popstate', handlePopState)
+    return () => window.removeEventListener('popstate', handlePopState)
+  }, [modalHistory])
 
   useEffect(() => {
     if (!currentWordSet) return // Don't load words if no set is selected
@@ -398,6 +427,19 @@ export default function HomeComponent() {
     return array
   }
 
+  // Update modal open handlers
+  const handleOpenModal = (modalType) => {
+    window.history.pushState(null, '')
+    setModalHistory(prev => [...prev, modalType])
+  }
+
+  // Update modal close handlers
+  const handleCloseModal = () => {
+    if (modalHistory.length > 0) {
+      window.history.back()
+    }
+  }
+
   return (
     <ChakraProvider theme={theme}>
       <Box
@@ -542,7 +584,10 @@ export default function HomeComponent() {
                       // bg="gray.700"
                       _hover={{ bg: "gray.600" }}
                       color="purple.500"
-                      onClick={() => setShowHistory(!showHistory)}
+                      onClick={() => {
+                        handleOpenModal('history')
+                        setShowHistory(true)
+                      }}
                       title="History (Mac: ⌘ + H | Win: Ctrl + H)"
                       aria-label="View History"
                       width="full"
@@ -559,7 +604,10 @@ export default function HomeComponent() {
                       // bg="gray.700"
                       _hover={{ bg: "gray.600" }}
                       color="blue.500"
-                      onClick={() => setShowStats(true)}
+                      onClick={() => {
+                        handleOpenModal('stats')
+                        setShowStats(true)
+                      }}
                       title="View Statistics"
                       aria-label="View Statistics"
                       width="full"
@@ -576,7 +624,10 @@ export default function HomeComponent() {
                       // bg="gray.700"
                       _hover={{ bg: "gray.600" }}
                       color="teal.500"
-                      onClick={() => setShowWordSets(true)}
+                      onClick={() => {
+                        handleOpenModal('wordsets')
+                        setShowWordSets(true)
+                      }}
                       title="Select Word Set"
                       aria-label="Select Word Set"
                       width="full"
@@ -593,7 +644,10 @@ export default function HomeComponent() {
                       // bg="gray.700"
                       _hover={{ bg: "gray.600" }}
                       color="gray.500"
-                      onClick={() => setShowShortcuts(true)}
+                      onClick={() => {
+                        handleOpenModal('shortcuts')
+                        setShowShortcuts(true)
+                      }}
                       title="Keyboard Shortcuts"
                       aria-label="Show Keyboard Shortcuts"
                       width="full"
@@ -649,25 +703,29 @@ export default function HomeComponent() {
 
           <ShortcutsGuide
             isOpen={showShortcuts}
-            onClose={() => setShowShortcuts(false)}
+            onClose={handleCloseModal}
           />
 
           <HistoryModal
             isOpen={showHistory}
-            onClose={() => setShowHistory(false)}
+            onClose={handleCloseModal}
             history={wordHistory}
           />
 
           <WordSetSelector
             isOpen={showWordSets}
-            onClose={() => setShowWordSets(false)}
-            onSelect={handleWordSetSelect}
-            currentSetId={currentWordSet.id}
+            onClose={handleCloseModal}
+            onSelect={(wordSet) => {
+              handleCloseModal()
+              handleWordSetSelect(wordSet)
+            }}
+            currentSetId={currentWordSet?.id}
+            hideCloseButton={!localStorage.getItem('hasVisitedBefore')}
           />
 
           <StatsModal
             isOpen={showStats}
-            onClose={() => setShowStats(false)}
+            onClose={handleCloseModal}
             stats={stats}
           />
 
