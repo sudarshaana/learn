@@ -94,12 +94,6 @@ export default function HomeComponent() {
 
   const [currentWordSet, setCurrentWordSet] = useState(() => {
     const saved = localStorage.getItem('currentWordSet')
-    if (wordSets.length === 1) {
-      const onlySet = wordSets[0]
-      localStorage.setItem('currentWordSet', JSON.stringify(onlySet))
-      localStorage.setItem('hasVisitedBefore', 'true')
-      return onlySet
-    }
     return saved ? JSON.parse(saved) : null
   })
 
@@ -341,6 +335,7 @@ export default function HomeComponent() {
     setIsCorrect(null)
   }, [currentWordIndex])
 
+  // Define handleReset first since handleWordSetSelect uses it
   const handleReset = () => {
     setCurrentWordIndex(0)
     setUserInput("")
@@ -363,6 +358,15 @@ export default function HomeComponent() {
     localStorage.removeItem('commonMistakes')
 
     setRandomGradient(getRandomGradient(colorMode))
+  }
+
+  // Define handleWordSetSelect before it's used in the conditional render
+  const handleWordSetSelect = (wordSet) => {
+    setCurrentWordSet(wordSet)
+    localStorage.setItem('currentWordSet', JSON.stringify(wordSet))
+    localStorage.setItem('hasVisitedBefore', 'true')
+    setShowWordSets(false)
+    handleReset()
   }
 
   useEffect(() => {
@@ -464,14 +468,6 @@ export default function HomeComponent() {
     if (modalHistory.length > 0) {
       window.history.back()
     }
-  }
-
-  const handleWordSetSelect = (wordSet) => {
-    setCurrentWordSet(wordSet)
-    localStorage.setItem('currentWordSet', JSON.stringify(wordSet))
-    localStorage.setItem('hasVisitedBefore', 'true') // Mark as visited
-    setShowWordSets(false)
-    handleReset()
   }
 
   return (
