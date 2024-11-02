@@ -295,10 +295,12 @@ export default function HomeComponent() {
     setUserInput("")
     setIsCorrect(null)
     setHasCountedIncorrect(false)
+    setShowCorrectWord(false)
     localStorage.setItem('hasCountedIncorrect', 'false')
     setRandomGradient(getRandomGradient(colorMode))
   }
 
+  // Update prevWord function
   const prevWord = () => {
     setCurrentWordIndex((prevIndex) => {
       const newIndex = prevIndex - 1
@@ -307,6 +309,7 @@ export default function HomeComponent() {
     setUserInput("")
     setIsCorrect(null)
     setHasCountedIncorrect(false)
+    setShowCorrectWord(false)
     localStorage.setItem('hasCountedIncorrect', 'false')
     setRandomGradient(getRandomGradient(colorMode))
   }
