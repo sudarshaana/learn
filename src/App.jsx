@@ -422,7 +422,9 @@ export default function HomeComponent() {
     incorrectCount,
     bestStreak,
     currentStreak: streak,
-    averageAttempts: (correctCount + incorrectCount) / (Object.keys(commonMistakes).length || 1),
+    averageAttempts: correctCount + incorrectCount > 0 ?
+      (correctCount + incorrectCount) / words.length :
+      0,
     commonMistakes
   }
 

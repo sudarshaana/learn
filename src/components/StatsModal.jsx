@@ -101,7 +101,7 @@ export const StatsModal = ({ isOpen, onClose, stats }) => {
                     <Text color="gray.300" fontSize="sm">Avg Attempts</Text>
                   </HStack>
                   <Text color="gray.100" fontSize="2xl" fontWeight="bold">
-                    {averageAttempts.toFixed(1)}
+                    {stats.averageAttempts.toFixed(1)}
                   </Text>
                 </Box>
               </SimpleGrid>
