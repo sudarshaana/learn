@@ -33,6 +33,8 @@ import { WordSetSelector } from './components/WordSetSelector'
 import { wordSets } from './data/wordSets'
 import { StatsModal } from './components/StatsModal'
 
+const correctSound = new Audio('https://cdn.freesound.org/sounds/607/607926-c6d5de58-0b53-44b2-846e-af11a36c93cd?filename=607926__robinhood76__10661-bonus-correct-answer.wav')
+
 export default function HomeComponent() {
   const { colorMode } = useColorMode()
   const [words, setWords] = useState([])
@@ -232,7 +234,8 @@ export default function HomeComponent() {
     setIsCorrect(isAnswerCorrect)
 
     if (isAnswerCorrect) {
-      setStreak(prev => prev + 1)
+      correctSound.currentTime = 0 // Reset sound to start
+      correctSound.play()
       const newCount = correctCount + 1
       setCorrectCount(newCount)
       localStorage.setItem('correctCount', newCount.toString())
@@ -242,7 +245,6 @@ export default function HomeComponent() {
         nextWord()
       }, 1000) // 1 second delay to show the success state
     } else {
-      setStreak(0)
       if (!hasCountedIncorrect) {
         const newCount = incorrectCount + 1
         setIncorrectCount(newCount)
@@ -439,6 +441,10 @@ export default function HomeComponent() {
       window.history.back()
     }
   }
+
+  useEffect(() => {
+    correctSound.load()
+  }, [])
 
   return (
     <ChakraProvider theme={theme}>
