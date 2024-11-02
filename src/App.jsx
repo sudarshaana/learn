@@ -36,6 +36,7 @@ import { StatsModal } from './components/StatsModal'
 import { useWordDetails } from './hooks/useWordDetails'
 // import { WordInfo } from './components/WordInfo'
 import { WordInfoModal } from './components/WordInfoModal'
+import { ResetConfirmationModal } from './components/ResetConfirmationModal'
 
 const correctSound = new Audio('https://cdn.freesound.org/sounds/607/607926-c6d5de58-0b53-44b2-846e-af11a36c93cd?filename=607926__robinhood76__10661-bonus-correct-answer.wav')
 
@@ -124,6 +125,8 @@ export default function HomeComponent() {
     const saved = localStorage.getItem('isRandomMode')
     return saved === 'true'
   })
+
+  const [showResetConfirm, setShowResetConfirm] = useState(false)
 
   useEffect(() => {
     correctSound.load()
@@ -348,6 +351,7 @@ export default function HomeComponent() {
     setWordHistory([])
     setStreak(0)
     setBestStreak(0)
+    setCommonMistakes({})
 
     localStorage.removeItem('currentWordIndex')
     localStorage.removeItem('correctCount')
@@ -356,17 +360,9 @@ export default function HomeComponent() {
     localStorage.removeItem('wordHistory')
     localStorage.removeItem('streak')
     localStorage.removeItem('bestStreak')
-
-    setRandomGradient(getRandomGradient(colorMode))
-    setCommonMistakes({})
     localStorage.removeItem('commonMistakes')
 
-    setUsedShuffleIndices([])
-    if (isRandomMode) {
-      const indices = Array.from({ length: words.length }, (_, i) => i)
-      const shuffled = shuffleArray([...indices])
-      setShuffledIndices(shuffled)
-    }
+    setRandomGradient(getRandomGradient(colorMode))
   }
 
   useEffect(() => {
@@ -555,6 +551,7 @@ export default function HomeComponent() {
                     onCheck={checkPronunciation}
                     onPrev={prevWord}
                     onNext={nextWord}
+                    onReset={() => setShowResetConfirm(true)}
                     onInfo={() => setShowInfo(true)}
                     showCorrectWord={showCorrectWord}
                     onToggleAnswer={() => setShowCorrectWord(!showCorrectWord)}
@@ -660,7 +657,7 @@ export default function HomeComponent() {
                     <Button
                       color="red.400"
                       size="sm"
-                      onClick={handleReset}
+                      onClick={() => setShowResetConfirm(true)}
                       title="Reset Progress"
                       aria-label="Reset Progress"
                       width="full"
@@ -823,6 +820,11 @@ export default function HomeComponent() {
         isLoading={detailsLoading}
       />
       {/* <StreakCounter streak={streak} bestStreak={bestStreak} /> */}
+      <ResetConfirmationModal
+        isOpen={showResetConfirm}
+        onClose={() => setShowResetConfirm(false)}
+        onConfirm={handleReset}
+      />
     </ChakraProvider>
   )
 }
