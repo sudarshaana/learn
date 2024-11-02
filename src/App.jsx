@@ -16,6 +16,7 @@ import {
   Link
 } from "@chakra-ui/react"
 import Papa from 'papaparse'
+import { motion, AnimatePresence } from 'framer-motion'
 
 import { WordDisplay } from './components/WordDisplay'
 import { InputSection } from './components/InputSection'
@@ -670,36 +671,62 @@ export default function HomeComponent() {
                   </Flex>
                 </Flex>
 
-                {showCorrectWord && (
-                  <Flex
-                    position={{ base: "relative", md: "absolute" }}
-                    bottom={{ base: "auto", md: "-120px" }}
-                    left="50%"
-                    transform="translateX(-50%)"
-                    color="gray.300"
-                    fontSize="lg"
-                    fontWeight="bold"
-                    alignItems="center"
-                    gap={2}
-                    mt={{ base: 4, md: 0 }}
-                    mb={{ base: 2, md: 0 }}
-                    width={{ base: "full", md: "auto" }}
-                    justifyContent="center"
-                  >
-                    {currentWord.correct}
-                    <Button
-                      size="xs"
-                      variant="ghost"
-                      color="gray.400"
-                      _hover={{ color: "gray.200" }}
-                      onClick={() => speakWord(currentWord.correct)}
-                      title="Listen to pronunciation"
-                      aria-label="Listen to pronunciation"
+                {/* Answer reveal section with improved animation */}
+                <AnimatePresence>
+                  {showCorrectWord && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -20, height: 0 }}
+                      animate={{ opacity: 1, y: 0, height: "auto" }}
+                      exit={{ opacity: 0, y: 20, height: 0 }}
+                      transition={{ duration: 0.3, ease: "easeInOut" }}
+                      style={{ width: "100%", overflow: "hidden" }}
                     >
-                      <Volume2 size={16} />
-                    </Button>
-                  </Flex>
-                )}
+                      <Flex
+                        width="full"
+                        bg="whiteAlpha.100"
+                        backdropFilter="blur(8px)"
+                        borderRadius="lg"
+                        p={4}
+                        alignItems="center"
+                        justifyContent="center"
+                        gap={3}
+                        borderWidth={1}
+                        borderColor="whiteAlpha.200"
+                        mb={4}
+                        mt={4}
+                      >
+                        <Text
+                          color="gray.100"
+                          fontSize={{ base: "lg", md: "xl" }}
+                          fontWeight="bold"
+                          textAlign="center"
+                        >
+                          {currentWord.correct}
+                        </Text>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          color="gray.400"
+                          _hover={{ color: "gray.200", bg: "whiteAlpha.200" }}
+                          onClick={() => speakWord(currentWord.correct)}
+                          title="Listen to pronunciation"
+                          aria-label="Listen to pronunciation"
+                          opacity={1}
+                          minW="36px"
+                          h="36px"
+                          p={2}
+                          bg="whiteAlpha.100"
+                          _active={{ bg: "whiteAlpha.300" }}
+                          borderRadius="full"
+                        >
+                          <Volume2 size={16} />
+                        </Button>
+                      </Flex>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+
               </Box>
 
               <Box
