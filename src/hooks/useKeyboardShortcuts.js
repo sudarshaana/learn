@@ -26,8 +26,8 @@ export const useKeyboardShortcuts = ({
 
       const isModifierKey = e.metaKey || e.ctrlKey
 
-      // Next Word - Cmd/Ctrl + N
-      if (isModifierKey && e.key === 'n') {
+      // Next Word - Cmd/Ctrl + ArrowRight
+      if (isModifierKey && e.key === 'ArrowRight') {
         e.preventDefault()
         nextWord()
       }
@@ -46,8 +46,8 @@ export const useKeyboardShortcuts = ({
         e.preventDefault()
         speakWord(currentWord.correct)
       }
-      // Previous Word - Cmd/Ctrl + P
-      if (isModifierKey && e.key === 'p') {
+      // Previous Word - Cmd/Ctrl + ArrowLeft
+      if (isModifierKey && e.key === 'ArrowLeft') {
         e.preventDefault()
         prevWord()
       }
