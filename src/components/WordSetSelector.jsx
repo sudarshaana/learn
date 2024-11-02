@@ -102,11 +102,11 @@ export const WordSetSelector = ({ isOpen, onClose, onSelect, currentSetId, hideC
                           <Text color="gray.100" fontSize="lg" fontWeight="medium">
                             {set.name}
                           </Text>
-                          {currentSetId === set.id && (
+                          {/* {currentSetId === set.id && (
                             <Badge colorScheme="blue">
                               Selected
                             </Badge>
-                          )}
+                          )} */}
                         </Flex>
                         <Text color="gray.400" fontSize="sm">
                           Click to select this word set
