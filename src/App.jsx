@@ -248,13 +248,31 @@ export default function HomeComponent() {
       }, 1000)
     } else {
       setStreak(0)
-      if (!hasCountedIncorrect) {
-        const newCount = incorrectCount + 1
-        setIncorrectCount(newCount)
-        setHasCountedIncorrect(true)
-        localStorage.setItem('incorrectCount', newCount.toString())
-        localStorage.setItem('hasCountedIncorrect', 'true')
+      const newMistakes = { ...commonMistakes }
+      const word = currentWord.correct
+
+      if (!newMistakes[word]) {
+        // Initialize if first mistake for this word
+        newMistakes[word] = {
+          count: 1,
+          attempts: [userInput]
+        }
+      } else {
+        // Update existing mistakes
+        newMistakes[word].count += 1
+        if (!newMistakes[word].attempts.includes(userInput)) {
+          newMistakes[word].attempts = [...(newMistakes[word].attempts || []), userInput]
+        }
       }
+
+      setCommonMistakes(newMistakes)
+      localStorage.setItem('commonMistakes', JSON.stringify(newMistakes))
+
+      const newCount = incorrectCount + 1
+      setIncorrectCount(newCount)
+      setHasCountedIncorrect(true)
+      localStorage.setItem('incorrectCount', newCount.toString())
+      localStorage.setItem('hasCountedIncorrect', 'true')
     }
 
     const newHistory = [{
@@ -266,13 +284,6 @@ export default function HomeComponent() {
 
     setWordHistory(newHistory)
     localStorage.setItem('wordHistory', JSON.stringify(newHistory))
-
-    if (!isAnswerCorrect && !hasCountedIncorrect) {
-      const newMistakes = { ...commonMistakes }
-      newMistakes[currentWord.correct] = (newMistakes[currentWord.correct] || 0) + 1
-      setCommonMistakes(newMistakes)
-      localStorage.setItem('commonMistakes', JSON.stringify(newMistakes))
-    }
   }
 
   const handleInputChange = (e) => {

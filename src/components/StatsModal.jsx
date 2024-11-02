@@ -12,7 +12,8 @@ import {
   Divider,
   Progress,
   SimpleGrid,
-  Container
+  Container,
+  Flex
 } from "@chakra-ui/react"
 import { Trophy, Target, Clock, Zap, Percent } from "lucide-react"
 import PropTypes from 'prop-types'
@@ -140,25 +141,39 @@ export const StatsModal = ({ isOpen, onClose, stats }) => {
 
               {/* Common Mistakes */}
               <Box>
-                <Text color="gray.300" mb={4} fontWeight="medium">Common Mistakes</Text>
-                <VStack spacing={3} align="stretch">
-                  {Object.entries(commonMistakes)
-                    .sort(([, a], [, b]) => b - a)
+                <Text color="gray.300" mb={2}>Common Mistakes</Text>
+                <VStack spacing={2} align="stretch">
+                  {Object.entries(stats.commonMistakes)
+                    .sort(([, a], [, b]) => b.count - a.count)
                     .slice(0, 5)
-                    .map(([word, count]) => (
-                      <HStack
+                    .map(([word, data]) => (
+                      <Box
                         key={word}
-                        justify="space-between"
                         bg="whiteAlpha.50"
                         p={3}
                         borderRadius="md"
                       >
-                        <Text color="gray.300">{word}</Text>
-                        <HStack spacing={2}>
-                          <Text color="gray.400" fontSize="sm">{count} times</Text>
-                          <Percent size={14} color="#CBD5E0" />
-                        </HStack>
-                      </HStack>
+                        <Flex justify="space-between" mb={2}>
+                          <Text color="gray.300" fontWeight="medium">{word}</Text>
+                          <Text color="red.400" fontSize="sm">
+                            {data.count} {data.count === 1 ? 'time' : 'times'}
+                          </Text>
+                        </Flex>
+                        {data.attempts && (
+                          <VStack align="start" spacing={1}>
+                            {data.attempts.map((attempt, index) => (
+                              <Text
+                                key={index}
+                                color="gray.500"
+                                fontSize="sm"
+                                pl={2}
+                              >
+                                • {attempt}
+                              </Text>
+                            ))}
+                          </VStack>
+                        )}
+                      </Box>
                     ))}
                 </VStack>
               </Box>
