@@ -557,11 +557,11 @@ export default function HomeComponent() {
                     {/* Show Answer Button */}
                     <Button
                       size="sm"
-                      // bg="gray.700"
+                      bg="gray.700"
                       _hover={{ bg: "gray.600" }}
-                      color={showCorrectWord ? "red.400" : "green.500"}
+                      color={showCorrectWord ? "red.400" : "green.400"}
                       onClick={() => setShowCorrectWord(!showCorrectWord)}
-                      title="Show/Hide Answer (Mac: ⌘ + O | Win: Ctrl + O)"
+                      title="Mac: ⌘ + O | Win: Ctrl + O"
                       aria-label="Show/Hide Answer"
                       width="full"
                       height="40px"
@@ -692,7 +692,6 @@ export default function HomeComponent() {
                         gap={3}
                         borderWidth={1}
                         borderColor="whiteAlpha.200"
-                        mb={4}
                         mt={4}
                       >
                         <Text
