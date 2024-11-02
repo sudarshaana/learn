@@ -1,5 +1,5 @@
 import PropTypes from 'prop-types'
-import { Flex, Button, Tooltip, Box } from "@chakra-ui/react"
+import { Flex, Button, Tooltip, Text, Box } from "@chakra-ui/react"
 import { Volume2, VolumeX } from "lucide-react"
 import { motion } from "framer-motion"
 
@@ -12,67 +12,91 @@ export const WordDisplay = ({ word, onSpeak }) => {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             key={word.incorrect}
+            style={{ width: '100%' }}
         >
             <Flex
-                fontSize={["xl", "2xl", "3xl"]}
-                fontWeight="bold"
-                textAlign="center"
-                color="gray.100"
-                wordBreak="break-word"
-                px={2}
+                direction="column"
+                alignItems="center"
+                width="full"
                 mt={{ base: 4, md: 12 }}
                 mb={{ base: 4, md: 12 }}
-                alignItems="center"
-                justifyContent="center"
-                gap={3}
-                minHeight={{ base: "80px", md: "120px" }}
+                px={{ base: 3, md: 6 }}
             >
-                {word.incorrect}
-                <Box display="inline-block" opacity={1}>
-                    <Tooltip
-                        label={isSpeechSupported ?
-                            "Mac: ⌘ + L | Win: Ctrl + L" :
-                            "Speech not supported on this device"
-                        }
+
+                <Box
+                    width="full"
+                    bg="whiteAlpha.100"
+                    // backdropFilter="blur(8px)"
+                    borderRadius="xl"
+                    px={6}
+                    py={5}
+                    position="relative"
+                    borderWidth={1}
+                    borderColor="whiteAlpha.200"
+                    boxShadow="lg"
+                >
+                    <Flex
+                        alignItems="center"
+                        justifyContent="center"
+                        gap={3}
                     >
-                        <Button
-                            size={{ base: "sm", md: "md" }}
-                            variant="ghost"
-                            color="gray.300"
-                            _hover={{ color: "gray.100" }}
-                            onClick={() => onSpeak(word.correct)}
-                            aria-label={isSpeechSupported ?
-                                "Listen to pronunciation" :
-                                "Speech not supported"
-                            }
-                            opacity={1}
-                            minW="40px"
-                            h="40px"
-                            p={2}
-                            bg="whiteAlpha.50"
-                            _active={{ bg: "whiteAlpha.100" }}
+                        <Text
+                            fontSize={["xl", "2xl", "3xl"]}
+                            fontWeight="bold"
+                            color="gray.100"
+                            textAlign="center"
+                            letterSpacing="wide"
                         >
-                            {isSpeechSupported ? (
-                                <Volume2
-                                    size={20}
-                                    style={{
-                                        minWidth: '20px',
-                                        minHeight: '20px',
-                                        opacity: 1
-                                    }}
-                                />
-                            ) : (
-                                <VolumeX
-                                    size={20}
-                                    style={{
-                                        minWidth: '20px',
-                                        minHeight: '20px',
-                                        opacity: 1
-                                    }}
-                                />
-                            )}
-                        </Button>
-                    </Tooltip>
+                            {word.incorrect}
+                        </Text>
+                        <Box display="inline-block" opacity={1}>
+                            <Tooltip
+                                label={isSpeechSupported ?
+                                    "Mac: ⌘ + L | Win: Ctrl + L" :
+                                    "Speech not supported on this device"
+                                }
+                            >
+                                <Button
+                                    size={{ base: "sm", md: "md" }}
+                                    variant="ghost"
+                                    color="gray.300"
+                                    _hover={{ color: "gray.100", bg: "whiteAlpha.200" }}
+                                    onClick={() => onSpeak(word.correct)}
+                                    aria-label={isSpeechSupported ?
+                                        "Listen to pronunciation" :
+                                        "Speech not supported"
+                                    }
+                                    opacity={1}
+                                    minW="40px"
+                                    h="40px"
+                                    p={2}
+                                    bg="whiteAlpha.50"
+                                    _active={{ bg: "whiteAlpha.100" }}
+                                    borderRadius="full"
+                                >
+                                    {isSpeechSupported ? (
+                                        <Volume2
+                                            size={20}
+                                            style={{
+                                                minWidth: '20px',
+                                                minHeight: '20px',
+                                                opacity: 1
+                                            }}
+                                        />
+                                    ) : (
+                                        <VolumeX
+                                            size={20}
+                                            style={{
+                                                minWidth: '20px',
+                                                minHeight: '20px',
+                                                opacity: 1
+                                            }}
+                                        />
+                                    )}
+                                </Button>
+                            </Tooltip>
+                        </Box>
+                    </Flex>
                 </Box>
             </Flex>
         </motion.div>

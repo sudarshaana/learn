@@ -20,26 +20,10 @@ export const InputSection = ({
     return (
         <motion.div
             style={{ width: '100%' }}
-            animate={
-                isCorrect === false ? {
-                    x: [-10, 10, -10, 10, 0],
-                    boxShadow: [
-                        "0 0 0 rgba(245, 101, 101, 0)",
-                        "0 0 20px rgba(245, 101, 101, 0.5)",
-                        "0 0 0 rgba(245, 101, 101, 0)",
-                        "0 0 20px rgba(245, 101, 101, 0.5)",
-                        "0 0 0 rgba(245, 101, 101, 0)"
-                    ]
-                } : isCorrect === true ? {
-                    scale: [1, 1.02, 1],
-                    boxShadow: [
-                        "0 0 0 rgba(72, 187, 120, 0)",
-                        "0 0 20px rgba(72, 187, 120, 0.5)",
-                        "0 0 0 rgba(72, 187, 120, 0)"
-                    ]
-                } : {}
-            }
-            transition={{ duration: isCorrect === true ? 0.3 : 0.4 }}
+            animate={isCorrect === false ? {
+                x: [-10, 10, -10, 10, 0],
+                transition: { duration: 0.4 }
+            } : {}}
         >
             <Box
                 position="relative"
@@ -53,11 +37,11 @@ export const InputSection = ({
                     onKeyDown={onKeyDown}
                     aria-label="Enter correct spelling"
                     bg="whiteAlpha.50"
-                    borderWidth={2}
+                    borderWidth={0}
                     borderColor={
                         isCorrect === true ? "green.500" :
-                        isCorrect === false ? "red.500" :
-                        "whiteAlpha.200"
+                            isCorrect === false ? "red.500" :
+                                "whiteAlpha.200"
                     }
                     color="white"
                     textAlign="center"
@@ -69,12 +53,12 @@ export const InputSection = ({
                     }}
                     _focus={{
                         borderColor: isCorrect === true ? "green.500" :
-                                   isCorrect === false ? "red.500" :
-                                   "whiteAlpha.400",
+                            isCorrect === false ? "red.500" :
+                                "whiteAlpha.400",
                         bg: "whiteAlpha.100",
                         boxShadow: isCorrect === true ? "0 0 0 1px var(--chakra-colors-green-500)" :
-                                  isCorrect === false ? "0 0 0 1px var(--chakra-colors-red-500)" :
-                                  "none"
+                            isCorrect === false ? "0 0 0 1px var(--chakra-colors-red-500)" :
+                                "none"
                     }}
                     _hover={{
                         borderColor: "whiteAlpha.400",

@@ -235,8 +235,9 @@ export default function HomeComponent() {
     setIsCorrect(isAnswerCorrect)
 
     if (isAnswerCorrect) {
-      correctSound.currentTime = 0 // Reset sound to start
+      correctSound.currentTime = 0
       correctSound.play()
+      setStreak(prev => prev + 1)
       const newCount = correctCount + 1
       setCorrectCount(newCount)
       localStorage.setItem('correctCount', newCount.toString())
@@ -244,8 +245,9 @@ export default function HomeComponent() {
       // Automatically move to next word after a short delay
       setTimeout(() => {
         nextWord()
-      }, 1000) // 1 second delay to show the success state
+      }, 1000)
     } else {
+      setStreak(0)
       if (!hasCountedIncorrect) {
         const newCount = incorrectCount + 1
         setIncorrectCount(newCount)
@@ -557,7 +559,6 @@ export default function HomeComponent() {
                     {/* Show Answer Button */}
                     <Button
                       size="sm"
-                      bg="gray.700"
                       _hover={{ bg: "gray.600" }}
                       color={showCorrectWord ? "red.400" : "green.400"}
                       onClick={() => setShowCorrectWord(!showCorrectWord)}
