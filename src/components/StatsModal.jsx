@@ -6,31 +6,17 @@ import {
   ModalBody,
   ModalCloseButton,
   VStack,
-  HStack,
   Text,
   Box,
-  Divider,
-  Progress,
   SimpleGrid,
-  Container,
-  Flex
+  Flex,
+  Badge
 } from "@chakra-ui/react"
-import { Trophy, Target, Clock, Zap, Percent } from "lucide-react"
+import { Trophy, Target, Clock, Zap } from "lucide-react"
 import PropTypes from 'prop-types'
+import { motion } from "framer-motion"
 
 export const StatsModal = ({ isOpen, onClose, stats }) => {
-  const {
-    totalAttempts,
-    correctCount,
-    incorrectCount,
-    bestStreak,
-    currentStreak,
-    averageAttempts,
-    commonMistakes
-  } = stats
-
-  const accuracy = totalAttempts ? (correctCount / totalAttempts) * 100 : 0
-
   return (
     <Modal
       isOpen={isOpen}
@@ -38,132 +24,155 @@ export const StatsModal = ({ isOpen, onClose, stats }) => {
       size={{ base: "full", md: "2xl" }}
       isCentered
     >
-      <ModalOverlay />
+      <ModalOverlay backdropFilter="blur(8px)" />
       <ModalContent
-        bg="gray.800"
+        bg="transparent"
         mx={{ base: 0, md: 4 }}
         my={{ base: 0, md: 4 }}
-        maxH={{ base: "100vh", md: "90vh" }}
-        overflow="auto"
+        boxShadow="none"
+        maxHeight={{ base: "100vh", md: "90vh" }}
+        display="flex"
+        flexDirection="column"
       >
-        <ModalHeader
-          color="gray.100"
-          borderBottom="1px solid"
-          borderColor="gray.700"
-          py={4}
+        <Box
+          bgGradient="linear(to-br, gray.800, gray.900)"
+          borderRadius="xl"
+          overflow="hidden"
+          borderWidth={1}
+          borderColor="whiteAlpha.200"
+          flex={1}
+          display="flex"
+          flexDirection="column"
         >
-          Your Statistics
-        </ModalHeader>
-        <ModalCloseButton color="gray.400" />
-        <ModalBody py={6}>
-          <Container maxW="container.md" px={{ base: 2, md: 4 }}>
-            <VStack spacing={8} align="stretch">
-              {/* Overview Cards - Always 2 columns */}
-              <SimpleGrid
-                columns={2}
-                spacing={{ base: 3, md: 4 }}
-                width="full"
-              >
-                {/* First Row */}
-                <Box bg="whiteAlpha.100" p={4} borderRadius="lg">
-                  <HStack spacing={2}>
-                    <Target size={16} color="#CBD5E0" />
-                    <Text color="gray.300" fontSize="sm">Accuracy</Text>
-                  </HStack>
-                  <Text color="gray.100" fontSize="2xl" fontWeight="bold">
-                    {accuracy.toFixed(1)}%
-                  </Text>
-                </Box>
+          <ModalHeader
+            bgGradient="linear(to-r, green.400, teal.400)"
+            color="white"
+            fontSize="2xl"
+            py={4}
+            flexShrink={0}
+            textAlign="center"
+            letterSpacing="wide"
+          >
+            Statistics
+          </ModalHeader>
+          <ModalCloseButton color="white" />
+          <ModalBody
+            py={6}
+            overflowY="auto"
+            css={{
+              '&::-webkit-scrollbar': { width: '4px' },
+              '&::-webkit-scrollbar-track': { background: 'transparent' },
+              '&::-webkit-scrollbar-thumb': {
+                background: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: '2px',
+              },
+              '&::-webkit-scrollbar-thumb:hover': {
+                background: 'rgba(255, 255, 255, 0.2)',
+              },
+            }}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <VStack spacing={6}>
+                <SimpleGrid columns={{ base: 2, md: 4 }} spacing={4} width="full">
+                  <Box
+                    bg="whiteAlpha.100"
+                    p={4}
+                    borderRadius="lg"
+                    borderWidth={1}
+                    borderColor="whiteAlpha.200"
+                  >
+                    <Flex align="center" gap={2} mb={2}>
+                      <Target size={16} color="var(--chakra-colors-blue-400)" />
+                      <Text color="gray.400" fontSize="sm">Accuracy</Text>
+                    </Flex>
+                    <Text color="gray.100" fontSize="2xl" fontWeight="bold">
+                      {((stats.correctCount / stats.totalAttempts) * 100 || 0).toFixed(1)}%
+                    </Text>
+                  </Box>
 
-                <Box bg="whiteAlpha.100" p={4} borderRadius="lg">
-                  <HStack spacing={2}>
-                    <Trophy size={16} color="#CBD5E0" />
-                    <Text color="gray.300" fontSize="sm">Best Streak</Text>
-                  </HStack>
-                  <Text color="gray.100" fontSize="2xl" fontWeight="bold">
-                    {bestStreak}
-                  </Text>
-                </Box>
+                  <Box
+                    bg="whiteAlpha.100"
+                    p={4}
+                    borderRadius="lg"
+                    borderWidth={1}
+                    borderColor="whiteAlpha.200"
+                  >
+                    <Flex align="center" gap={2} mb={2}>
+                      <Trophy size={16} color="var(--chakra-colors-yellow-400)" />
+                      <Text color="gray.400" fontSize="sm">Best Streak</Text>
+                    </Flex>
+                    <Text color="gray.100" fontSize="2xl" fontWeight="bold">
+                      {stats.bestStreak}
+                    </Text>
+                  </Box>
 
-                {/* Second Row */}
-                <Box bg="whiteAlpha.100" p={4} borderRadius="lg">
-                  <HStack spacing={2}>
-                    <Zap size={16} color="#CBD5E0" />
-                    <Text color="gray.300" fontSize="sm">Current</Text>
-                  </HStack>
-                  <Text color="gray.100" fontSize="2xl" fontWeight="bold">
-                    {currentStreak}
-                  </Text>
-                </Box>
+                  <Box
+                    bg="whiteAlpha.100"
+                    p={4}
+                    borderRadius="lg"
+                    borderWidth={1}
+                    borderColor="whiteAlpha.200"
+                  >
+                    <Flex align="center" gap={2} mb={2}>
+                      <Zap size={16} color="var(--chakra-colors-orange-400)" />
+                      <Text color="gray.400" fontSize="sm">Current</Text>
+                    </Flex>
+                    <Text color="gray.100" fontSize="2xl" fontWeight="bold">
+                      {stats.currentStreak}
+                    </Text>
+                  </Box>
 
-                <Box bg="whiteAlpha.100" p={4} borderRadius="lg">
-                  <HStack spacing={2}>
-                    <Clock size={16} color="#CBD5E0" />
-                    <Text color="gray.300" fontSize="sm">Avg Attempts</Text>
-                  </HStack>
-                  <Text color="gray.100" fontSize="2xl" fontWeight="bold">
-                    {stats.averageAttempts.toFixed(1)}
-                  </Text>
-                </Box>
-              </SimpleGrid>
+                  <Box
+                    bg="whiteAlpha.100"
+                    p={4}
+                    borderRadius="lg"
+                    borderWidth={1}
+                    borderColor="whiteAlpha.200"
+                  >
+                    <Flex align="center" gap={2} mb={2}>
+                      <Clock size={16} color="var(--chakra-colors-purple-400)" />
+                      <Text color="gray.400" fontSize="sm">Avg Attempts</Text>
+                    </Flex>
+                    <Text color="gray.100" fontSize="2xl" fontWeight="bold">
+                      {stats.averageAttempts.toFixed(1)}
+                    </Text>
+                  </Box>
+                </SimpleGrid>
 
-              <Divider borderColor="gray.600" />
-
-              {/* Progress Section */}
-              <Box>
-                <Text color="gray.300" mb={4} fontWeight="medium">Progress Overview</Text>
-                <VStack spacing={4} align="stretch">
-                  <HStack justify="space-between">
-                    <Text color="green.400" fontSize="sm">Correct</Text>
-                    <Text color="green.400" fontSize="sm">{correctCount}</Text>
-                  </HStack>
-                  <Progress
-                    value={(correctCount / totalAttempts) * 100}
-                    colorScheme="green"
-                    size="sm"
-                    borderRadius="full"
-                  />
-
-                  <HStack justify="space-between" mt={2}>
-                    <Text color="red.400" fontSize="sm">Incorrect</Text>
-                    <Text color="red.400" fontSize="sm">{incorrectCount}</Text>
-                  </HStack>
-                  <Progress
-                    value={(incorrectCount / totalAttempts) * 100}
-                    colorScheme="red"
-                    size="sm"
-                    borderRadius="full"
-                  />
-                </VStack>
-              </Box>
-
-              <Divider borderColor="gray.600" />
-
-              {/* Common Mistakes */}
-              <Box>
-                <Text color="gray.300" mb={2}>Common Mistakes</Text>
-                <VStack spacing={2} align="stretch">
-                  {Object.entries(stats.commonMistakes)
-                    .sort(([, a], [, b]) => b.count - a.count)
-                    .slice(0, 5)
-                    .map(([word, data]) => (
-                      <Box
-                        key={word}
-                        bg="whiteAlpha.50"
-                        p={3}
-                        borderRadius="md"
-                      >
-                        <Flex justify="space-between" mb={2}>
-                          <Text color="gray.300" fontWeight="medium">{word}</Text>
-                          <Text color="red.400" fontSize="sm">
-                            {data.count} {data.count === 1 ? 'time' : 'times'}
-                          </Text>
-                        </Flex>
-                        {data.attempts && (
+                <Box
+                  bg="whiteAlpha.50"
+                  p={4}
+                  borderRadius="lg"
+                  width="full"
+                  borderWidth={1}
+                  borderColor="whiteAlpha.100"
+                >
+                  <Text color="gray.300" mb={4} fontWeight="medium">Common Mistakes</Text>
+                  <VStack spacing={3} align="stretch">
+                    {Object.entries(stats.commonMistakes)
+                      .sort(([, a], [, b]) => b.count - a.count)
+                      .slice(0, 5)
+                      .map(([word, data]) => (
+                        <Box
+                          key={word}
+                          bg="whiteAlpha.50"
+                          p={3}
+                          borderRadius="md"
+                        >
+                          <Flex justify="space-between" mb={2}>
+                            <Text color="gray.300" fontWeight="medium">{word}</Text>
+                            <Badge colorScheme="red" variant="subtle">
+                              {data.count} times
+                            </Badge>
+                          </Flex>
                           <VStack align="start" spacing={1}>
-                            {data.attempts.map((attempt, index) => (
+                            {data.attempts.map((attempt, idx) => (
                               <Text
-                                key={index}
+                                key={idx}
                                 color="gray.500"
                                 fontSize="sm"
                                 pl={2}
@@ -172,14 +181,14 @@ export const StatsModal = ({ isOpen, onClose, stats }) => {
                               </Text>
                             ))}
                           </VStack>
-                        )}
-                      </Box>
-                    ))}
-                </VStack>
-              </Box>
-            </VStack>
-          </Container>
-        </ModalBody>
+                        </Box>
+                      ))}
+                  </VStack>
+                </Box>
+              </VStack>
+            </motion.div>
+          </ModalBody>
+        </Box>
       </ModalContent>
     </Modal>
   )
