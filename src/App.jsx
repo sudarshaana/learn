@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Eye, EyeOff, History, Volume2, HelpCircle, Book, BarChart2, Shuffle } from "lucide-react"
+import { Eye, EyeOff, History, Volume2, HelpCircle, Book, BarChart2, Shuffle, Info } from "lucide-react"
 import {
   ChakraProvider,
   Box,
@@ -27,12 +27,15 @@ import { useSpeech } from './hooks/useSpeech'
 import { theme } from './utils/theme'
 import { getRandomGradient } from './styles/gradients'
 import { ProgressBar } from './components/ProgressBar'
-import { StreakCounter } from './components/StreakCounter'
+// import { StreakCounter } from './components/StreakCounter'
 import { ShortcutsGuide } from './components/ShortcutsGuide'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
 import { WordSetSelector } from './components/WordSetSelector'
 import { wordSets } from './data/wordSets'
 import { StatsModal } from './components/StatsModal'
+import { useWordDetails } from './hooks/useWordDetails'
+// import { WordInfo } from './components/WordInfo'
+import { WordInfoModal } from './components/WordInfoModal'
 
 const correctSound = new Audio('https://cdn.freesound.org/sounds/607/607926-c6d5de58-0b53-44b2-846e-af11a36c93cd?filename=607926__robinhood76__10661-bonus-correct-answer.wav')
 
@@ -107,11 +110,6 @@ export default function HomeComponent() {
 
   const [isEnterPressed, setIsEnterPressed] = useState(false)
 
-  const [isRandomMode, setIsRandomMode] = useState(() => {
-    const saved = localStorage.getItem('isRandomMode')
-    return saved === 'true'
-  })
-
   const [shuffledIndices, setShuffledIndices] = useState([])
 
   // Add state to track used indices in shuffle mode
@@ -119,6 +117,17 @@ export default function HomeComponent() {
 
   // Add new state for tracking modal history
   const [modalHistory, setModalHistory] = useState([])
+
+  const [showInfo, setShowInfo] = useState(false)
+
+  const [isRandomMode, setIsRandomMode] = useState(() => {
+    const saved = localStorage.getItem('isRandomMode')
+    return saved === 'true'
+  })
+
+  useEffect(() => {
+    correctSound.load()
+  }, [])
 
   useEffect(() => {
     localStorage.setItem('currentWordIndex', currentWordIndex.toString())
@@ -225,10 +234,6 @@ export default function HomeComponent() {
   useEffect(() => {
     localStorage.setItem('isRandomMode', isRandomMode.toString())
   }, [isRandomMode])
-
-  const currentWord = words.length > 0 ?
-    words[isRandomMode ? shuffledIndices[currentWordIndex] || 0 : currentWordIndex] :
-    { correct: '', incorrect: '' }
 
   const checkPronunciation = () => {
     const isAnswerCorrect = userInput.toLowerCase().trim() === currentWord.correct.toLowerCase()
@@ -372,6 +377,17 @@ export default function HomeComponent() {
 
   //const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
 
+  // First, define currentWord
+  const currentWord = words.length > 0 ?
+    words[isRandomMode ? shuffledIndices[currentWordIndex] || 0 : currentWordIndex] :
+    { correct: '', incorrect: '' }
+
+  // Then use the hook with currentWord
+  const { wordDetails, isLoading: detailsLoading } = useWordDetails(
+    showInfo ? currentWord?.correct : null
+  )
+
+  // Then use keyboard shortcuts
   useKeyboardShortcuts({
     showHistory,
     setShowHistory,
@@ -379,17 +395,10 @@ export default function HomeComponent() {
     prevWord,
     setShowCorrectWord,
     speakWord,
-    currentWord,
-    setIsRandomMode
+    setIsRandomMode,
+    setShowInfo,
+    currentWord: currentWord?.correct
   })
-
-  const handleWordSetSelect = (wordSet) => {
-    setCurrentWordSet(wordSet)
-    localStorage.setItem('currentWordSet', JSON.stringify(wordSet))
-    localStorage.setItem('hasVisitedBefore', 'true') // Mark as visited
-    setShowWordSets(false)
-    handleReset()
-  }
 
   // Show loading state or word set selector if needed
   if (!currentWordSet || (showWordSets && !localStorage.getItem('hasVisitedBefore'))) {
@@ -461,9 +470,13 @@ export default function HomeComponent() {
     }
   }
 
-  useEffect(() => {
-    correctSound.load()
-  }, [])
+  const handleWordSetSelect = (wordSet) => {
+    setCurrentWordSet(wordSet)
+    localStorage.setItem('currentWordSet', JSON.stringify(wordSet))
+    localStorage.setItem('hasVisitedBefore', 'true') // Mark as visited
+    setShowWordSets(false)
+    handleReset()
+  }
 
   return (
     <ChakraProvider theme={theme}>
@@ -537,12 +550,17 @@ export default function HomeComponent() {
                     isCorrect={isCorrect}
                   />
 
+                  {/* <WordInfo
+                    wordDetails={wordDetails}
+                    isLoading={detailsLoading}
+                  /> */}
+
                   <ButtonControls
                     onCheck={checkPronunciation}
                     onPrev={prevWord}
                     onNext={nextWord}
                     onReset={handleReset}
-                    isEnterPressed={isEnterPressed}
+                    onInfo={() => setShowInfo(true)}
                   />
 
 
@@ -807,6 +825,15 @@ export default function HomeComponent() {
           </Text>
         </Box>
       </Box>
+
+      <WordInfoModal
+        isOpen={showInfo}
+        onClose={() => setShowInfo(false)}
+        word={currentWord.correct}
+        wordDetails={wordDetails}
+        isLoading={detailsLoading}
+      />
+      {/* <StreakCounter streak={streak} bestStreak={bestStreak} /> */}
     </ChakraProvider>
   )
 }

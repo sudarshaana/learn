@@ -1,34 +1,21 @@
 import PropTypes from 'prop-types'
-import { VStack, Button, Flex, Box } from "@chakra-ui/react"
-import { ChevronLeft, ChevronRight, RotateCcw, ArrowRight } from "lucide-react"
-import { motion, useAnimationControls } from "framer-motion"
-import { useEffect } from 'react'
+import { VStack, Button, Flex, Text } from "@chakra-ui/react"
+import { ChevronLeft, ChevronRight, RotateCcw, Info, ArrowRight } from "lucide-react"
+import { motion } from "framer-motion"
 
 export const ButtonControls = ({
     onCheck,
     onPrev,
     onNext,
     onReset,
-    isEnterPressed
+    onInfo
 }) => {
-    const controls = useAnimationControls()
-
-    useEffect(() => {
-        if (isEnterPressed) {
-            controls.start({
-                scale: [1, 0.95, 1],
-                transition: { duration: 0.2 }
-            })
-        }
-    }, [isEnterPressed, controls])
-
     return (
         <VStack width="full" spacing={2}>
             <motion.div
                 style={{ width: '100%' }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                animate={controls}
             >
                 <Button
                     onClick={onCheck}
@@ -56,7 +43,7 @@ export const ButtonControls = ({
                     justifyContent="center"
                     opacity={0.9}
                 >
-                    <Box>Check</Box>
+                    <Text>Check</Text>
                     <ArrowRight size={20} />
                 </Button>
             </motion.div>
@@ -64,34 +51,43 @@ export const ButtonControls = ({
             <Flex width="full" gap={2} mt={2}>
                 <Button
                     onClick={onPrev}
-                    _hover={{ bg: "gray.700" }}
+                    bg="gray.700"
+                    _hover={{ bg: "gray.600" }}
                     color="gray.300"
                     title="Mac: ⌘ + P | Win: Ctrl + P"
                     flex={1}
-                    opacity={0.9}
                 >
                     <ChevronLeft size={16} />
                 </Button>
                 <Button
                     onClick={onNext}
-                    _hover={{ bg: "gray.700" }}
+                    bg="gray.700"
+                    _hover={{ bg: "gray.600" }}
                     color="gray.300"
                     title="Mac: ⌘ + N | Win: Ctrl + N"
                     flex={1}
-                    opacity={0.9}
                 >
                     <ChevronRight size={16} />
                 </Button>
                 <Button
                     onClick={onReset}
-                    _hover={{ bg: "gray.700" }}
+                    bg="gray.700"
+                    _hover={{ bg: "gray.600" }}
                     color="gray.300"
-                    aria-label="Reset everything"
                     title="Reset progress"
                     flex={1}
-                    opacity={0.9}
                 >
                     <RotateCcw size={16} />
+                </Button>
+                <Button
+                    onClick={onInfo}
+                    bg="gray.700"
+                    _hover={{ bg: "gray.600" }}
+                    color="blue.300"
+                    title="Word Info (Mac: ⌘ + I | Win: Ctrl + I)"
+                    flex={1}
+                >
+                    <Info size={16} />
                 </Button>
             </Flex>
         </VStack>
@@ -103,9 +99,5 @@ ButtonControls.propTypes = {
     onPrev: PropTypes.func.isRequired,
     onNext: PropTypes.func.isRequired,
     onReset: PropTypes.func.isRequired,
-    isEnterPressed: PropTypes.bool
-}
-
-ButtonControls.defaultProps = {
-    isEnterPressed: false
+    onInfo: PropTypes.func.isRequired
 }
