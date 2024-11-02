@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Eye, EyeOff, History, Volume2, HelpCircle, Book, BarChart2, Shuffle, Info } from "lucide-react"
+import { Eye, EyeOff, History, Volume2, HelpCircle, Book, BarChart2, Shuffle, Info, RotateCcw } from "lucide-react"
 import {
   ChakraProvider,
   Box,
@@ -550,17 +550,13 @@ export default function HomeComponent() {
                     isCorrect={isCorrect}
                   />
 
-                  {/* <WordInfo
-                    wordDetails={wordDetails}
-                    isLoading={detailsLoading}
-                  /> */}
-
                   <ButtonControls
                     onCheck={checkPronunciation}
                     onPrev={prevWord}
                     onNext={nextWord}
-                    onReset={handleReset}
                     onInfo={() => setShowInfo(true)}
+                    showCorrectWord={showCorrectWord}
+                    onToggleAnswer={() => setShowCorrectWord(!showCorrectWord)}
                   />
 
 
@@ -587,26 +583,11 @@ export default function HomeComponent() {
                     justifyContent="center"
                     width="full"
                   >
-                    {/* Show Answer Button */}
-                    <Button
-                      size="sm"
-                      _hover={{ bg: "gray.600" }}
-                      color={showCorrectWord ? "red.400" : "green.400"}
-                      onClick={() => setShowCorrectWord(!showCorrectWord)}
-                      title="Mac: ⌘ + O | Win: Ctrl + O"
-                      aria-label="Show/Hide Answer"
-                      width="full"
-                      height="40px"
-                      padding={0}
-                      flex={1}
-                    >
-                      {showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
-                    </Button>
+
 
                     {/* Add Shuffle Toggle Button */}
                     <Button
                       size="sm"
-                      _hover={{ bg: "gray.600" }}
                       color={isRandomMode ? "yellow.400" : "gray.500"}
                       onClick={() => setIsRandomMode(prev => !prev)}
                       title={isRandomMode ? "Random Mode On" : "Random Mode Off"}
@@ -623,8 +604,6 @@ export default function HomeComponent() {
                     {/* History Button */}
                     <Button
                       size="sm"
-                      // bg="gray.700"
-                      _hover={{ bg: "gray.600" }}
                       color="purple.500"
                       onClick={() => {
                         handleOpenModal('history')
@@ -643,8 +622,6 @@ export default function HomeComponent() {
                     {/* Stats Button */}
                     <Button
                       size="sm"
-                      // bg="gray.700"
-                      _hover={{ bg: "gray.600" }}
                       color="blue.500"
                       onClick={() => {
                         handleOpenModal('stats')
@@ -663,8 +640,6 @@ export default function HomeComponent() {
                     {/* Words Button */}
                     <Button
                       size="sm"
-                      // bg="gray.700"
-                      _hover={{ bg: "gray.600" }}
                       color="teal.500"
                       onClick={() => {
                         handleOpenModal('wordsets')
@@ -680,11 +655,24 @@ export default function HomeComponent() {
                       <Book size={16} />
                     </Button>
 
+                    {/* Show Reset Button */}
+                    <Button
+                      color="red.400"
+                      size="sm"
+                      onClick={handleReset}
+                      title="Reset Progress"
+                      aria-label="Reset Progress"
+                      width="full"
+                      height="40px"
+                      padding={0}
+                      flex={1}
+                    >
+                      <RotateCcw size={16} />
+                    </Button>
+
                     {/* Shortcuts Button */}
                     <Button
                       size="sm"
-                      // bg="gray.700"
-                      _hover={{ bg: "gray.600" }}
                       color="gray.500"
                       onClick={() => {
                         handleOpenModal('shortcuts')
