@@ -12,10 +12,7 @@ export const useGameState = ({ words = [], colorMode, onUpdateStats }) => {
   const [isCorrect, setIsCorrect] = useState(null)
   const [randomGradient, setRandomGradient] = useState(getRandomGradient(colorMode))
   const [showCorrectWord, setShowCorrectWord] = useState(false)
-  const [hasCountedIncorrect, setHasCountedIncorrect] = useState(() => {
-    const saved = localStorage.getItem('hasCountedIncorrect')
-    return saved === 'true'
-  })
+  const [wrongAttemptedWords, setWrongAttemptedWords] = useState(new Set())
   const [isRandomMode, setIsRandomMode] = useState(() => {
     const saved = localStorage.getItem('isRandomMode')
     return saved === 'true'
@@ -32,11 +29,6 @@ export const useGameState = ({ words = [], colorMode, onUpdateStats }) => {
   useEffect(() => {
     localStorage.setItem('currentWordIndex', currentWordIndex.toString())
   }, [currentWordIndex])
-
-  // Save hasCountedIncorrect to localStorage
-  useEffect(() => {
-    localStorage.setItem('hasCountedIncorrect', hasCountedIncorrect.toString())
-  }, [hasCountedIncorrect])
 
   // Save isRandomMode to localStorage
   useEffect(() => {
@@ -83,6 +75,10 @@ export const useGameState = ({ words = [], colorMode, onUpdateStats }) => {
   }
 
   const checkPronunciation = () => {
+    if (!userInput.trim()) {
+      return;
+    }
+
     const currentWord = getCurrentWord()
     const isAnswerCorrect = userInput.toLowerCase().trim() === currentWord.correct.toLowerCase()
     setIsCorrect(isAnswerCorrect)
@@ -90,13 +86,26 @@ export const useGameState = ({ words = [], colorMode, onUpdateStats }) => {
     if (isAnswerCorrect) {
       correctSound.currentTime = 0
       correctSound.play()
-      onUpdateStats({ isCorrect: true, word: currentWord.correct, attempt: userInput })
+      onUpdateStats({
+        isCorrect: true,
+        word: currentWord.correct,
+        attempt: userInput,
+        shouldIncrementCounter: true
+      })
       setTimeout(() => {
         nextWord()
       }, 1000)
     } else {
-      onUpdateStats({ isCorrect: false, word: currentWord.correct, attempt: userInput })
-      setHasCountedIncorrect(true)
+      onUpdateStats({
+        isCorrect: false,
+        word: currentWord.correct,
+        attempt: userInput,
+        shouldIncrementCounter: !wrongAttemptedWords.has(currentWord.correct)
+      })
+
+      if (!wrongAttemptedWords.has(currentWord.correct)) {
+        setWrongAttemptedWords(prev => new Set([...prev, currentWord.correct]))
+      }
     }
   }
 
@@ -123,14 +132,13 @@ export const useGameState = ({ words = [], colorMode, onUpdateStats }) => {
     }
     setUserInput("")
     setIsCorrect(null)
-    setHasCountedIncorrect(false)
     setShowCorrectWord(false)
     setRandomGradient(getRandomGradient(colorMode))
 
     if (resetIndex) {
+      setWrongAttemptedWords(new Set())
       localStorage.removeItem('currentWordIndex')
     }
-    localStorage.setItem('hasCountedIncorrect', 'false')
   }
 
   const fullReset = () => {
@@ -154,7 +162,6 @@ export const useGameState = ({ words = [], colorMode, onUpdateStats }) => {
     userInput,
     isCorrect,
     showCorrectWord,
-    hasCountedIncorrect,
     isRandomMode,
     randomGradient,
     handleInputChange,

@@ -110,7 +110,7 @@ export default function HomeComponent() {
   } = useGameState({
     words,
     colorMode,
-    onUpdateStats: ({ isCorrect, word, attempt }) => {
+    onUpdateStats: ({ isCorrect, word, attempt, shouldIncrementCounter }) => {
       if (isCorrect) {
         setStreak(prev => prev + 1)
         const newCount = correctCount + 1
@@ -133,9 +133,11 @@ export default function HomeComponent() {
         setCommonMistakes(newMistakes)
         localStorage.setItem('commonMistakes', JSON.stringify(newMistakes))
 
-        const newCount = incorrectCount + 1
-        setIncorrectCount(newCount)
-        localStorage.setItem('incorrectCount', newCount.toString())
+        if (shouldIncrementCounter) {
+          const newCount = incorrectCount + 1
+          setIncorrectCount(newCount)
+          localStorage.setItem('incorrectCount', newCount.toString())
+        }
       }
 
       const newHistory = [{
