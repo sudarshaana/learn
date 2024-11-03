@@ -1,17 +1,15 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Eye, EyeOff, History, Volume2, HelpCircle, Book, BarChart2, Shuffle, Info, RotateCcw } from "lucide-react"
+import { History, Volume2, HelpCircle, Book, BarChart2, Shuffle, RotateCcw } from "lucide-react"
 import {
   ChakraProvider,
   Box,
   VStack,
-  Heading,
   Text,
   Button,
   Flex,
   Spinner,
-  useToast,
   useColorMode,
   Link
 } from "@chakra-ui/react"
@@ -25,7 +23,6 @@ import { StatsDisplay } from './components/StatsDisplay'
 import { HistoryModal } from './components/HistoryModal'
 import { useSpeech } from './hooks/useSpeech'
 import { theme } from './utils/theme'
-import { getRandomGradient } from './styles/gradients'
 import { ProgressBar } from './components/ProgressBar'
 // import { StreakCounter } from './components/StreakCounter'
 import { ShortcutsGuide } from './components/ShortcutsGuide'
@@ -37,19 +34,13 @@ import { useWordDetails } from './hooks/useWordDetails'
 // import { WordInfo } from './components/WordInfo'
 import { WordInfoModal } from './components/WordInfoModal'
 import { ResetConfirmationModal } from './components/ResetConfirmationModal'
+import { useGameState } from './hooks/useGameState'
 
 const correctSound = new Audio('https://raw.githubusercontent.com/sudarshaana/learn/refs/heads/main/public/sounds/correct-answer.mp3')
 
 export default function HomeComponent() {
   const { colorMode } = useColorMode()
   const [words, setWords] = useState([])
-  const [currentWordIndex, setCurrentWordIndex] = useState(() => {
-    const saved = localStorage.getItem('currentWordIndex')
-    return saved ? parseInt(saved, 10) : 0
-  })
-  const [userInput, setUserInput] = useState("")
-  const [isCorrect, setIsCorrect] = useState(null)
-  const [randomGradient, setRandomGradient] = useState(getRandomGradient(colorMode))
   const [correctCount, setCorrectCount] = useState(() => {
     const saved = localStorage.getItem('correctCount')
     return saved ? parseInt(saved, 10) : 0
@@ -58,11 +49,6 @@ export default function HomeComponent() {
     const saved = localStorage.getItem('incorrectCount')
     return saved ? parseInt(saved, 10) : 0
   })
-  const [hasCountedIncorrect, setHasCountedIncorrect] = useState(() => {
-    const saved = localStorage.getItem('hasCountedIncorrect')
-    return saved === 'true'
-  })
-  const [showCorrectWord, setShowCorrectWord] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const [wordHistory, setWordHistory] = useState(() => {
     const savedHistory = localStorage.getItem('wordHistory')
@@ -70,10 +56,7 @@ export default function HomeComponent() {
   })
 
   const { speakWord } = useSpeech()
-
   const [isLoading, setIsLoading] = useState(true)
-
-  const toast = useToast()
 
   const [streak, setStreak] = useState(() => {
     const saved = localStorage.getItem('streak')
@@ -86,7 +69,6 @@ export default function HomeComponent() {
   })
 
   const [showShortcuts, setShowShortcuts] = useState(false)
-
   const [showWordSets, setShowWordSets] = useState(() => {
     const hasVisited = localStorage.getItem('hasVisitedBefore')
     return !hasVisited && wordSets.length > 1
@@ -103,24 +85,68 @@ export default function HomeComponent() {
     return saved ? JSON.parse(saved) : {}
   })
 
-  const [isEnterPressed, setIsEnterPressed] = useState(false)
-
-  const [shuffledIndices, setShuffledIndices] = useState([])
-
-  // Add state to track used indices in shuffle mode
-  const [usedShuffleIndices, setUsedShuffleIndices] = useState([])
-
-  // Add new state for tracking modal history
   const [modalHistory, setModalHistory] = useState([])
-
   const [showInfo, setShowInfo] = useState(false)
-
-  const [isRandomMode, setIsRandomMode] = useState(() => {
-    const saved = localStorage.getItem('isRandomMode')
-    return saved === 'true'
-  })
-
   const [showResetConfirm, setShowResetConfirm] = useState(false)
+
+  const {
+    currentWord,
+    currentWordIndex,
+    userInput,
+    isCorrect,
+    showCorrectWord,
+    isRandomMode,
+    randomGradient,
+    handleInputChange,
+    handleKeyDown,
+    checkPronunciation,
+    nextWord,
+    prevWord,
+    setShowCorrectWord,
+    setIsRandomMode,
+    resetWordState,
+  } = useGameState({
+    words,
+    colorMode,
+    onUpdateStats: ({ isCorrect, word, attempt }) => {
+      if (isCorrect) {
+        setStreak(prev => prev + 1)
+        const newCount = correctCount + 1
+        setCorrectCount(newCount)
+        localStorage.setItem('correctCount', newCount.toString())
+      } else {
+        setStreak(0)
+        const newMistakes = { ...commonMistakes }
+        if (!newMistakes[word]) {
+          newMistakes[word] = {
+            count: 1,
+            attempts: [attempt]
+          }
+        } else {
+          newMistakes[word].count += 1
+          if (!newMistakes[word].attempts.includes(attempt)) {
+            newMistakes[word].attempts = [...(newMistakes[word].attempts || []), attempt]
+          }
+        }
+        setCommonMistakes(newMistakes)
+        localStorage.setItem('commonMistakes', JSON.stringify(newMistakes))
+
+        const newCount = incorrectCount + 1
+        setIncorrectCount(newCount)
+        localStorage.setItem('incorrectCount', newCount.toString())
+      }
+
+      const newHistory = [{
+        word,
+        isCorrect,
+        attempt,
+        timestamp: Date.now()
+      }, ...wordHistory.filter(item => item.word !== word)]
+
+      setWordHistory(newHistory)
+      localStorage.setItem('wordHistory', JSON.stringify(newHistory))
+    }
+  })
 
   useEffect(() => {
     correctSound.load()
@@ -192,10 +218,6 @@ export default function HomeComponent() {
   }, [incorrectCount])
 
   useEffect(() => {
-    localStorage.setItem('hasCountedIncorrect', hasCountedIncorrect.toString())
-  }, [hasCountedIncorrect])
-
-  useEffect(() => {
     localStorage.setItem('streak', streak.toString())
   }, [streak])
 
@@ -206,158 +228,26 @@ export default function HomeComponent() {
     }
   }, [streak, bestStreak])
 
-  // Update useEffect for shuffle
-  useEffect(() => {
-    if (words.length > 0 && isRandomMode) {
-      const remainingIndices = Array.from({ length: words.length }, (_, i) => i)
-        .filter(index => !usedShuffleIndices.includes(index))
-
-      if (remainingIndices.length === 0) {
-        // All words have been used, reset tracking
-        setUsedShuffleIndices([])
-        const allIndices = Array.from({ length: words.length }, (_, i) => i)
-        const shuffled = shuffleArray([...allIndices])
-        setShuffledIndices(shuffled)
-      } else {
-        const shuffled = shuffleArray([...remainingIndices])
-        setShuffledIndices(shuffled)
-      }
-    } else {
-      setShuffledIndices([])
-      setUsedShuffleIndices([])
-    }
-  }, [words.length, isRandomMode, usedShuffleIndices.length === words.length])
-
   useEffect(() => {
     localStorage.setItem('isRandomMode', isRandomMode.toString())
   }, [isRandomMode])
 
-  const checkPronunciation = () => {
-    const isAnswerCorrect = userInput.toLowerCase().trim() === currentWord.correct.toLowerCase()
-    setIsCorrect(isAnswerCorrect)
-
-    if (isAnswerCorrect) {
-      correctSound.currentTime = 0
-      correctSound.play()
-      setStreak(prev => prev + 1)
-      const newCount = correctCount + 1
-      setCorrectCount(newCount)
-      localStorage.setItem('correctCount', newCount.toString())
-
-      // Automatically move to next word after a short delay
-      setTimeout(() => {
-        nextWord()
-      }, 1000)
-    } else {
-      setStreak(0)
-      const newMistakes = { ...commonMistakes }
-      const word = currentWord.correct
-
-      if (!newMistakes[word]) {
-        // Initialize if first mistake for this word
-        newMistakes[word] = {
-          count: 1,
-          attempts: [userInput]
-        }
-      } else {
-        // Update existing mistakes
-        newMistakes[word].count += 1
-        if (!newMistakes[word].attempts.includes(userInput)) {
-          newMistakes[word].attempts = [...(newMistakes[word].attempts || []), userInput]
-        }
-      }
-
-      setCommonMistakes(newMistakes)
-      localStorage.setItem('commonMistakes', JSON.stringify(newMistakes))
-
-      const newCount = incorrectCount + 1
-      setIncorrectCount(newCount)
-      setHasCountedIncorrect(true)
-      localStorage.setItem('incorrectCount', newCount.toString())
-      localStorage.setItem('hasCountedIncorrect', 'true')
-    }
-
-    const newHistory = [{
-      word: currentWord.correct,
-      isCorrect: isAnswerCorrect,
-      attempt: userInput,
-      timestamp: Date.now()
-    }, ...wordHistory.filter(item => item.word !== currentWord.correct)]
-
-    setWordHistory(newHistory)
-    localStorage.setItem('wordHistory', JSON.stringify(newHistory))
-  }
-
-  const handleInputChange = (e) => {
-    setUserInput(e.target.value)
-    setIsCorrect(null)
-  }
-
-  const handleKeyDown = (e) => {
-    if (e.key === "Enter") {
-      setIsEnterPressed(true)
-      checkPronunciation()
-      setTimeout(() => setIsEnterPressed(false), 200)
-    }
-  }
-
-  // Update nextWord function
-  const nextWord = () => {
-    if (isRandomMode) {
-      const currentIndex = shuffledIndices[currentWordIndex]
-      setUsedShuffleIndices(prev => [...prev, currentIndex])
-    }
-    setCurrentWordIndex((prevIndex) => (prevIndex + 1) % words.length)
-    setUserInput("")
-    setIsCorrect(null)
-    setHasCountedIncorrect(false)
-    setShowCorrectWord(false)
-    localStorage.setItem('hasCountedIncorrect', 'false')
-    setRandomGradient(getRandomGradient(colorMode))
-  }
-
-  // Update prevWord function
-  const prevWord = () => {
-    setCurrentWordIndex((prevIndex) => {
-      const newIndex = prevIndex - 1
-      return newIndex < 0 ? words.length - 1 : newIndex
-    })
-    setUserInput("")
-    setIsCorrect(null)
-    setHasCountedIncorrect(false)
-    setShowCorrectWord(false)
-    localStorage.setItem('hasCountedIncorrect', 'false')
-    setRandomGradient(getRandomGradient(colorMode))
-  }
-
-  useEffect(() => {
-    setUserInput("")
-    setIsCorrect(null)
-  }, [currentWordIndex])
-
   // Define handleReset first since handleWordSetSelect uses it
   const handleReset = () => {
-    setCurrentWordIndex(0)
-    setUserInput("")
-    setIsCorrect(null)
+    resetWordState()
     setCorrectCount(0)
     setIncorrectCount(0)
-    setHasCountedIncorrect(false)
     setWordHistory([])
     setStreak(0)
     setBestStreak(0)
     setCommonMistakes({})
 
-    localStorage.removeItem('currentWordIndex')
     localStorage.removeItem('correctCount')
     localStorage.removeItem('incorrectCount')
-    localStorage.removeItem('hasCountedIncorrect')
     localStorage.removeItem('wordHistory')
     localStorage.removeItem('streak')
     localStorage.removeItem('bestStreak')
     localStorage.removeItem('commonMistakes')
-
-    setRandomGradient(getRandomGradient(colorMode))
   }
 
   // Define handleWordSetSelect before it's used in the conditional render
@@ -369,18 +259,9 @@ export default function HomeComponent() {
     handleReset()
   }
 
-  useEffect(() => {
-    setRandomGradient(getRandomGradient(colorMode))
-  }, [colorMode])
-
   const bgGradient = `linear(to-br, ${randomGradient.join(', ')})`
 
   //const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0
-
-  // First, define currentWord
-  const currentWord = words.length > 0 ?
-    words[isRandomMode ? shuffledIndices[currentWordIndex] || 0 : currentWordIndex] :
-    { correct: '', incorrect: '' }
 
   // Then use the hook with currentWord
   const { wordDetails, isLoading: detailsLoading } = useWordDetails(
@@ -446,15 +327,6 @@ export default function HomeComponent() {
       (correctCount + incorrectCount) / words.length :
       0,
     commonMistakes
-  }
-
-  // Add shuffle helper function
-  const shuffleArray = (array) => {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]]
-    }
-    return array
   }
 
   // Update modal open handlers
@@ -551,6 +423,20 @@ export default function HomeComponent() {
                     onInfo={() => setShowInfo(true)}
                     showCorrectWord={showCorrectWord}
                     onToggleAnswer={() => setShowCorrectWord(!showCorrectWord)}
+                    onShuffle={() => setIsRandomMode(prev => !prev)}
+                    onHistory={() => {
+                      handleOpenModal('history')
+                      setShowHistory(true)
+                    }}
+                    onStats={() => {
+                      handleOpenModal('stats')
+                      setShowStats(true)
+                    }}
+                    onWordList={() => {
+                      handleOpenModal('wordsets')
+                      setShowWordSets(true)
+                    }}
+                    isRandomMode={isRandomMode}
                   />
 
 
