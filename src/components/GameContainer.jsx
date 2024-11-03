@@ -43,10 +43,12 @@ export const GameContainer = ({
       maxWidth={{ base: "100%", md: "500px" }}
       mx="auto"
       position="relative"
-      height={{ base: "100vh", md: "auto" }}
-      pb={{ base: "100px", md: 0 }}
+      display="flex"
+      flexDirection="column"
+      pt={{ base: 0, md: 0 }}
     >
       <Box
+        flex={{ base: "100vh", md: "auto" }}
         p={{ base: 4, md: 6 }}
         bgGradient={bgGradient}
         borderRadius={{ base: 0, md: "lg" }}
@@ -54,11 +56,10 @@ export const GameContainer = ({
         borderWidth={{ base: 0, md: 1 }}
         borderColor="gray.700"
         position="relative"
-        height={{ base: "100%", md: "auto" }}
         display="flex"
         flexDirection="column"
       >
-        <Box top="-2px" width='full'>
+        <Box width='full'>
           <ProgressBar
             current={currentWordIndex + 1}
             total={totalWords}
@@ -149,17 +150,17 @@ export const GameContainer = ({
             )}
           </AnimatePresence>
         </VStack>
-      </Box>
 
-      <NavigationBar
-        isRandomMode={isRandomMode}
-        onShuffle={onShuffle}
-        onHistory={onHistory}
-        onStats={onStats}
-        onWordList={onWordList}
-        onReset={onReset}
-        onHelp={onHelp}
-      />
+        <NavigationBar
+          isRandomMode={isRandomMode}
+          onShuffle={onShuffle}
+          onHistory={onHistory}
+          onStats={onStats}
+          onWordList={onWordList}
+          onReset={onReset}
+          onHelp={onHelp}
+        />
+      </Box>
     </Box>
   )
 }
