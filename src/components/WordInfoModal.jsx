@@ -89,7 +89,12 @@ export const WordInfoModal = ({ isOpen, onClose, word, wordDetails, isLoading })
                         >
                             {word}
                         </ModalHeader>
-                        <ModalCloseButton color="white" />
+                        <ModalCloseButton
+                            color="white"
+                            position="absolute"
+                            top="50%"
+                            transform="translateY(-50%)"
+                        />
                     </Box>
 
                     {/* Scrollable Content */}
