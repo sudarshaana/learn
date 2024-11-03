@@ -26,6 +26,7 @@ import {
   BarChart2,
   Book,
   RotateCcw,
+  Volume2,
   HelpCircle
 } from "lucide-react"
 import PropTypes from 'prop-types'
@@ -44,6 +45,7 @@ export const ShortcutsGuide = ({ isOpen, onClose }) => {
   ]
 
   const buttonHelp = [
+    { icon: <Volume2 size={16} />, color: "gray.300", description: "Listen word pronunciation" },
     { icon: <ChevronLeft size={16} />, color: "gray.300", description: "Go to previous word" },
     { icon: <ChevronRight size={16} />, color: "gray.300", description: "Go to next word" },
     { icon: <Eye size={16} />, color: "green.400", description: "Show/Hide the correct spelling" },
