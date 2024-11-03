@@ -16,14 +16,10 @@ import {
 import Papa from 'papaparse'
 import { motion, AnimatePresence } from 'framer-motion'
 
-import { WordDisplay } from './components/WordDisplay'
-import { InputSection } from './components/InputSection'
-import { ButtonControls } from './components/ButtonControls'
-import { StatsDisplay } from './components/StatsDisplay'
+import { GameContainer } from './components/GameContainer'
 import { HistoryModal } from './components/HistoryModal'
 import { useSpeech } from './hooks/useSpeech'
 import { theme } from './utils/theme'
-import { ProgressBar } from './components/ProgressBar'
 // import { StreakCounter } from './components/StreakCounter'
 import { ShortcutsGuide } from './components/ShortcutsGuide'
 import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts'
@@ -333,256 +329,34 @@ export default function HomeComponent() {
               <Text color="gray.400">Loading words...</Text>
             </Flex>
           ) : (
-            <Box
-              width="full"
-              maxWidth={{ base: "100%", md: "500px" }}
-              mx="auto"
-              position="relative"
-              height={{ base: "100vh", md: "auto" }}
-              pb={{ base: "100px", md: 0 }}
-            >
-              <Box
-                p={{ base: 4, md: 6 }}
-                bgGradient={bgGradient}
-                borderRadius={{ base: 0, md: "lg" }}
-                boxShadow={{ base: "none", md: "dark-lg" }}
-                borderWidth={{ base: 0, md: 1 }}
-                borderColor="gray.700"
-                position="relative"
-                height={{ base: "100%", md: "auto" }}
-                display="flex"
-                flexDirection="column"
-              >
-                <Box top="-2px" width='full'>
-                  <ProgressBar
-                    current={currentWordIndex + 1}
-                    total={words.length}
-                  />
-                </Box>
-                <StatsDisplay
-                  correctCount={correctCount}
-                  incorrectCount={incorrectCount}
-                  currentIndex={currentWordIndex}
-                  totalWords={words.length}
-                  streak={streak}
-                  bestStreak={bestStreak}
-                />
-
-                <VStack spacing={[3, 4]} pt={12}>
-
-                  <WordDisplay
-                    word={currentWord}
-                    onSpeak={speakWord}
-                  />
-
-                  <InputSection
-                    userInput={userInput}
-                    onInputChange={handleInputChange}
-                    onKeyDown={handleKeyDown}
-                    isCorrect={isCorrect}
-                  />
-
-                  <ButtonControls
-                    onCheck={checkPronunciation}
-                    onPrev={prevWord}
-                    onNext={nextWord}
-                    onReset={() => setShowResetConfirm(true)}
-                    onInfo={() => setShowInfo(true)}
-                    showCorrectWord={showCorrectWord}
-                    onToggleAnswer={() => setShowCorrectWord(!showCorrectWord)}
-                    onShuffle={() => setIsRandomMode(prev => !prev)}
-                    onHistory={() => handleOpenModal('history')}
-                    onStats={() => handleOpenModal('stats')}
-                    onWordList={() => handleOpenModal('wordsets')}
-                    isRandomMode={isRandomMode}
-                  />
-
-
-                </VStack>
-
-
-                <Flex
-                  position={{ base: "relative", md: "absolute" }}
-                  bottom={{ base: "auto", md: "-70px" }}
-                  left="50%"
-                  transform="translateX(-50%)"
-                  mt={{ base: 4, md: 8 }}
-                  mb={{ base: 2, md: 0 }}
-                  alignItems="center"
-                  width={{ base: "full", md: "100%" }}
-                  maxWidth={{ base: "full", md: "500px" }}
-                  zIndex={2}
-                  bg="whiteAlpha.50"
-                  borderRadius="lg"
-                  p={2}
-                >
-                  <Flex
-                    gap={2}
-                    justifyContent="center"
-                    width="full"
-                  >
-
-
-                    {/* Add Shuffle Toggle Button */}
-                    <Button
-                      size="sm"
-                      color={isRandomMode ? "yellow.400" : "gray.500"}
-                      onClick={() => setIsRandomMode(prev => !prev)}
-                      title={isRandomMode ? "Random Mode On" : "Random Mode Off"}
-                      aria-label="Toggle Random Mode"
-                      width="full"
-                      height="40px"
-                      padding={0}
-                      flex={1}
-                    >
-                      <Shuffle size={16} />
-                    </Button>
-
-
-                    {/* History Button */}
-                    <Button
-                      size="sm"
-                      color="purple.500"
-                      onClick={() => handleOpenModal('history')}
-                      title="History (Mac: ⌘ + H | Win: Ctrl + H)"
-                      aria-label="View History"
-                      width="full"
-                      height="40px"
-                      padding={0}
-                      flex={1}
-                    >
-                      <History size={16} />
-                    </Button>
-
-                    {/* Stats Button */}
-                    <Button
-                      size="sm"
-                      color="blue.500"
-                      onClick={() => handleOpenModal('stats')}
-                      title="View Statistics"
-                      aria-label="View Statistics"
-                      width="full"
-                      height="40px"
-                      padding={0}
-                      flex={1}
-                    >
-                      <BarChart2 size={16} />
-                    </Button>
-
-                    {/* Words Button */}
-                    <Button
-                      size="sm"
-                      color="teal.500"
-                      onClick={() => handleOpenModal('wordsets')}
-                      title="Select Word Set"
-                      aria-label="Select Word Set"
-                      width="full"
-                      height="40px"
-                      padding={0}
-                      flex={1}
-                    >
-                      <Book size={16} />
-                    </Button>
-
-                    {/* Show Reset Button */}
-                    <Button
-                      color="red.400"
-                      size="sm"
-                      onClick={() => setShowResetConfirm(true)}
-                      title="Reset Progress"
-                      aria-label="Reset Progress"
-                      width="full"
-                      height="40px"
-                      padding={0}
-                      flex={1}
-                    >
-                      <RotateCcw size={16} />
-                    </Button>
-
-                    {/* Shortcuts Button */}
-                    <Button
-                      size="sm"
-                      color="gray.500"
-                      onClick={() => {
-                        handleOpenModal('shortcuts')
-                        setShowShortcuts(true)
-                      }}
-                      title="Keyboard Shortcuts"
-                      aria-label="Show Keyboard Shortcuts"
-                      width="full"
-                      height="40px"
-                      padding={0}
-                      flex={1}
-                    >
-                      <HelpCircle size={16} />
-                    </Button>
-
-                  </Flex>
-                </Flex>
-
-                {/* Answer reveal section with improved animation */}
-                <AnimatePresence>
-                  {showCorrectWord && (
-                    <motion.div
-                      initial={{ opacity: 0, y: -20, height: 0 }}
-                      animate={{ opacity: 1, y: 0, height: "auto" }}
-                      exit={{ opacity: 0, y: 20, height: 0 }}
-                      transition={{ duration: 0.3, ease: "easeInOut" }}
-                      style={{ width: "100%", overflow: "hidden" }}
-                    >
-                      <Flex
-                        width="full"
-                        bg="whiteAlpha.100"
-                        backdropFilter="blur(8px)"
-                        borderRadius="lg"
-                        p={4}
-                        alignItems="center"
-                        justifyContent="center"
-                        gap={3}
-                        borderWidth={1}
-                        borderColor="whiteAlpha.200"
-                        mt={4}
-                      >
-                        <Text
-                          color="gray.100"
-                          fontSize={{ base: "lg", md: "xl" }}
-                          fontWeight="bold"
-                          textAlign="center"
-                        >
-                          {currentWord.correct}
-                        </Text>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          color="gray.400"
-                          _hover={{ color: "gray.200", bg: "whiteAlpha.200" }}
-                          onClick={() => speakWord(currentWord.correct)}
-                          title="Listen to pronunciation"
-                          aria-label="Listen to pronunciation"
-                          opacity={1}
-                          minW="36px"
-                          h="36px"
-                          p={2}
-                          bg="whiteAlpha.100"
-                          _active={{ bg: "whiteAlpha.300" }}
-                          borderRadius="full"
-                        >
-                          <Volume2 size={16} />
-                        </Button>
-                      </Flex>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
-
-              </Box>
-
-              <Box
-                height={{ base: "40px", md: "0" }}  // Height for mobile only
-                display={{ base: "block", md: "none" }}  // Only show on mobile
-                aria-hidden="true"  // For accessibility
-              />
-            </Box>
+            <GameContainer
+              currentWord={currentWord}
+              currentWordIndex={currentWordIndex}
+              totalWords={words.length}
+              userInput={userInput}
+              isCorrect={isCorrect}
+              showCorrectWord={showCorrectWord}
+              isRandomMode={isRandomMode}
+              bgGradient={bgGradient}
+              correctCount={correctCount}
+              incorrectCount={incorrectCount}
+              streak={streak}
+              bestStreak={bestStreak}
+              onInputChange={handleInputChange}
+              onKeyDown={handleKeyDown}
+              onCheck={checkPronunciation}
+              onPrev={prevWord}
+              onNext={nextWord}
+              onReset={() => setShowResetConfirm(true)}
+              onInfo={() => setShowInfo(true)}
+              onToggleAnswer={() => setShowCorrectWord(!showCorrectWord)}
+              onShuffle={() => setIsRandomMode(prev => !prev)}
+              onHistory={() => handleOpenModal('history')}
+              onStats={() => handleOpenModal('stats')}
+              onWordList={() => handleOpenModal('wordsets')}
+              onSpeak={speakWord}
+              onHelp={() => handleOpenModal('shortcuts')}
+            />
           )}
 
           <ShortcutsGuide

@@ -1,26 +1,29 @@
+import { Button, HStack, VStack, Text } from "@chakra-ui/react"
+import { ArrowLeft, ArrowRight, Eye, EyeOff, Info } from "lucide-react"
 import PropTypes from 'prop-types'
-import { VStack, Button, Flex, Text } from "@chakra-ui/react"
-import {
-    ChevronLeft,
-    ChevronRight,
-    Info,
-    ArrowRight,
-    Eye,
-    EyeOff,
-} from "lucide-react"
 import { motion } from "framer-motion"
 
 export const ButtonControls = ({
-    onCheck,
-    onPrev,
-    onNext,
-    onInfo,
-    showCorrectWord,
-    onToggleAnswer,
+  onCheck,
+  onPrev,
+  onNext,
+  showCorrectWord,
+  onToggleAnswer,
+  onInfo,
 }) => {
-    return (
-        <VStack width="full" spacing={2}>
-            <motion.div
+  return (
+    <VStack spacing={2} width="full">
+      {/* <Button
+        onClick={onCheck}
+        colorScheme="blue"
+        width="full"
+        title="Check Answer (Enter)"
+        aria-label="Check Answer"
+        size="lg"
+      >
+        <Check size={20} />
+      </Button> */}
+      <motion.div
                 style={{ width: '100%' }}
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
@@ -56,61 +59,54 @@ export const ButtonControls = ({
                 </Button>
             </motion.div>
 
-            {/* First row: Navigation buttons */}
-            <Flex width="full" gap={2} mt={2}>
-                <Button
-                    onClick={onPrev}
-                    color="gray.300"
-                    title="Previous Word (Mac: ⌘ + P | Win: Ctrl + P)"
-                    flex={1}
-                >
-                    <ChevronLeft size={16} />
-                </Button>
-
-                <Button
-                    onClick={onNext}
-                    color="gray.300"
-                    title="Next Word (Mac: ⌘ + N | Win: Ctrl + N)"
-                    flex={1}
-                >
-                    <ChevronRight size={16} />
-                </Button>
-
-                <Button
-                    onClick={onToggleAnswer}
-                    color={showCorrectWord ? "red.400" : "green.400"}
-                    title="Show/Hide Answer (Mac: ⌘ + O | Win: Ctrl + O)"
-                    flex={1}
-                >
-                    {showCorrectWord ? <EyeOff size={16} /> : <Eye size={16} />}
-                </Button>
-
-                <Button
-                    onClick={onInfo}
-                    color="blue.300"
-                    title="Word Info (Mac: ⌘ + I | Win: Ctrl + I)"
-                    flex={1}
-                >
-                    <Info size={16} />
-                </Button>
-            </Flex>
+      <HStack spacing={2} width="full" mt={2}>
+        <Button
+          onClick={onPrev}
+          flex={1}
+          title="Previous Word (Mac: ⌘ + ← | Win: Ctrl + ←)"
+          aria-label="Previous Word"
+        >
+          <ArrowLeft size={20} />
+        </Button>
 
 
-        </VStack>
-    )
+
+        <Button
+          onClick={onNext}
+          flex={1}
+          title="Next Word (Mac: ⌘ + → | Win: Ctrl + →)"
+          aria-label="Next Word"
+        >
+          <ArrowRight size={20} />
+        </Button>
+
+        <Button
+          onClick={onToggleAnswer}
+          flex={1}
+          title={showCorrectWord ? "Hide Answer ⌘ + o" : "Show Answer"}
+          aria-label={showCorrectWord ? "Hide Answer" : "Show Answer"}
+        >
+          {showCorrectWord ? <EyeOff size={20} /> : <Eye size={20} />}
+        </Button>
+
+        <Button
+          onClick={onInfo}
+          flex={1}
+          title="Next Word (Mac: ⌘ + i | Win: Ctrl + i)"
+          aria-label="Word Info"
+        >
+          <Info size={20} />
+        </Button>
+      </HStack>
+    </VStack>
+  )
 }
 
 ButtonControls.propTypes = {
-    onCheck: PropTypes.func.isRequired,
-    onPrev: PropTypes.func.isRequired,
-    onNext: PropTypes.func.isRequired,
-    onReset: PropTypes.func.isRequired,
-    onInfo: PropTypes.func.isRequired,
-    showCorrectWord: PropTypes.bool.isRequired,
-    onToggleAnswer: PropTypes.func.isRequired,
-    onShuffle: PropTypes.func.isRequired,
-    onHistory: PropTypes.func.isRequired,
-    onStats: PropTypes.func.isRequired,
-    onWordList: PropTypes.func.isRequired,
-    isRandomMode: PropTypes.bool.isRequired
+  onCheck: PropTypes.func.isRequired,
+  onPrev: PropTypes.func.isRequired,
+  onNext: PropTypes.func.isRequired,
+  showCorrectWord: PropTypes.bool.isRequired,
+  onToggleAnswer: PropTypes.func.isRequired,
+  onInfo: PropTypes.func.isRequired,
 }
