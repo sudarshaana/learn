@@ -35,6 +35,7 @@ import { useWordDetails } from './hooks/useWordDetails'
 import { WordInfoModal } from './components/WordInfoModal'
 import { ResetConfirmationModal } from './components/ResetConfirmationModal'
 import { useGameState } from './hooks/useGameState'
+import { useModalManager } from './hooks/useModalManager'
 
 const correctSound = new Audio('https://raw.githubusercontent.com/sudarshaana/learn/refs/heads/main/public/sounds/correct-answer.mp3')
 
@@ -49,7 +50,6 @@ export default function HomeComponent() {
     const saved = localStorage.getItem('incorrectCount')
     return saved ? parseInt(saved, 10) : 0
   })
-  const [showHistory, setShowHistory] = useState(false)
   const [wordHistory, setWordHistory] = useState(() => {
     const savedHistory = localStorage.getItem('wordHistory')
     return savedHistory ? JSON.parse(savedHistory) : []
@@ -68,26 +68,32 @@ export default function HomeComponent() {
     return saved ? parseInt(saved, 10) : 0
   })
 
-  const [showShortcuts, setShowShortcuts] = useState(false)
-  const [showWordSets, setShowWordSets] = useState(() => {
-    const hasVisited = localStorage.getItem('hasVisitedBefore')
-    return !hasVisited && wordSets.length > 1
-  })
-
   const [currentWordSet, setCurrentWordSet] = useState(() => {
     const saved = localStorage.getItem('currentWordSet')
     return saved ? JSON.parse(saved) : null
   })
 
-  const [showStats, setShowStats] = useState(false)
   const [commonMistakes, setCommonMistakes] = useState(() => {
     const saved = localStorage.getItem('commonMistakes')
     return saved ? JSON.parse(saved) : {}
   })
 
-  const [modalHistory, setModalHistory] = useState([])
-  const [showInfo, setShowInfo] = useState(false)
-  const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const {
+    showHistory,
+    showStats,
+    showShortcuts,
+    showWordSets,
+    showInfo,
+    showResetConfirm,
+    setShowHistory,
+    setShowStats,
+    setShowShortcuts,
+    setShowWordSets,
+    setShowInfo,
+    setShowResetConfirm,
+    handleOpenModal,
+    handleCloseModal,
+  } = useModalManager()
 
   const {
     currentWord,
@@ -155,32 +161,6 @@ export default function HomeComponent() {
   useEffect(() => {
     localStorage.setItem('currentWordIndex', currentWordIndex.toString())
   }, [currentWordIndex])
-
-  useEffect(() => {
-    const handlePopState = () => {
-      if (modalHistory.length > 0) {
-        const lastModal = modalHistory[modalHistory.length - 1]
-        switch (lastModal) {
-          case 'history':
-            setShowHistory(false)
-            break
-          case 'shortcuts':
-            setShowShortcuts(false)
-            break
-          case 'wordsets':
-            setShowWordSets(false)
-            break
-          case 'stats':
-            setShowStats(false)
-            break
-        }
-        setModalHistory(prev => prev.slice(0, -1))
-      }
-    }
-
-    window.addEventListener('popstate', handlePopState)
-    return () => window.removeEventListener('popstate', handlePopState)
-  }, [modalHistory])
 
   useEffect(() => {
     if (!currentWordSet) return // Don't load words if no set is selected
@@ -329,19 +309,6 @@ export default function HomeComponent() {
     commonMistakes
   }
 
-  // Update modal open handlers
-  const handleOpenModal = (modalType) => {
-    window.history.pushState(null, '')
-    setModalHistory(prev => [...prev, modalType])
-  }
-
-  // Update modal close handlers
-  const handleCloseModal = () => {
-    if (modalHistory.length > 0) {
-      window.history.back()
-    }
-  }
-
   return (
     <ChakraProvider theme={theme}>
       <Box
@@ -424,18 +391,9 @@ export default function HomeComponent() {
                     showCorrectWord={showCorrectWord}
                     onToggleAnswer={() => setShowCorrectWord(!showCorrectWord)}
                     onShuffle={() => setIsRandomMode(prev => !prev)}
-                    onHistory={() => {
-                      handleOpenModal('history')
-                      setShowHistory(true)
-                    }}
-                    onStats={() => {
-                      handleOpenModal('stats')
-                      setShowStats(true)
-                    }}
-                    onWordList={() => {
-                      handleOpenModal('wordsets')
-                      setShowWordSets(true)
-                    }}
+                    onHistory={() => handleOpenModal('history')}
+                    onStats={() => handleOpenModal('stats')}
+                    onWordList={() => handleOpenModal('wordsets')}
                     isRandomMode={isRandomMode}
                   />
 
@@ -485,10 +443,7 @@ export default function HomeComponent() {
                     <Button
                       size="sm"
                       color="purple.500"
-                      onClick={() => {
-                        handleOpenModal('history')
-                        setShowHistory(true)
-                      }}
+                      onClick={() => handleOpenModal('history')}
                       title="History (Mac: ⌘ + H | Win: Ctrl + H)"
                       aria-label="View History"
                       width="full"
@@ -503,10 +458,7 @@ export default function HomeComponent() {
                     <Button
                       size="sm"
                       color="blue.500"
-                      onClick={() => {
-                        handleOpenModal('stats')
-                        setShowStats(true)
-                      }}
+                      onClick={() => handleOpenModal('stats')}
                       title="View Statistics"
                       aria-label="View Statistics"
                       width="full"
@@ -521,10 +473,7 @@ export default function HomeComponent() {
                     <Button
                       size="sm"
                       color="teal.500"
-                      onClick={() => {
-                        handleOpenModal('wordsets')
-                        setShowWordSets(true)
-                      }}
+                      onClick={() => handleOpenModal('wordsets')}
                       title="Select Word Set"
                       aria-label="Select Word Set"
                       width="full"
