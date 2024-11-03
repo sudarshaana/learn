@@ -9,10 +9,9 @@ import {
   Button,
   Text,
   Box,
-  Badge,
   Flex
 } from "@chakra-ui/react"
-import { Book } from "lucide-react"
+import { Check } from "lucide-react"
 import PropTypes from 'prop-types'
 import { wordSets } from '../data/wordSets'
 import { motion } from "framer-motion"
@@ -59,21 +58,7 @@ export const WordSetSelector = ({ isOpen, onClose, onSelect, currentSetId, hideC
             {hideCloseButton ? 'Select a Word Set to Begin' : 'Select Word Set'}
           </ModalHeader>
           {!hideCloseButton && <ModalCloseButton color="white" />}
-          <ModalBody
-            py={6}
-            overflowY="auto"
-            css={{
-              '&::-webkit-scrollbar': { width: '4px' },
-              '&::-webkit-scrollbar-track': { background: 'transparent' },
-              '&::-webkit-scrollbar-thumb': {
-                background: 'rgba(255, 255, 255, 0.1)',
-                borderRadius: '2px',
-              },
-              '&::-webkit-scrollbar-thumb:hover': {
-                background: 'rgba(255, 255, 255, 0.2)',
-              },
-            }}
-          >
+          <ModalBody py={6}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -97,21 +82,34 @@ export const WordSetSelector = ({ isOpen, onClose, onSelect, currentSetId, hideC
                       _hover={{ bg: "whiteAlpha.200" }}
                       transition="all 0.2s"
                     >
-                      <VStack align="start" spacing={2}>
-                        <Flex justify="space-between" width="full" align="center">
-                          <Text color="gray.100" fontSize="lg" fontWeight="medium">
-                            {set.name}
-                          </Text>
-                          {/* {currentSetId === set.id && (
-                            <Badge colorScheme="blue">
-                              Selected
-                            </Badge>
-                          )} */}
-                        </Flex>
-                        <Text color="gray.400" fontSize="sm">
-                          Click to select this word set
+                      <Flex direction="column" align="flex-start">
+                        <Text
+                          color="gray.100"
+                          fontSize="lg"
+                          fontWeight="medium"
+                          whiteSpace="normal"
+                          textAlign="left"
+                        >
+                          {set.name}
                         </Text>
-                      </VStack>
+                        <Text
+                          color={currentSetId === set.id ? "green.400" : "gray.400"}
+                          fontSize="sm"
+                          display="flex"
+                          alignItems="center"
+                          gap={1}
+                          mt={2}
+                        >
+                          {currentSetId === set.id ? (
+                            <>
+                              <Check size={14} />
+                              Currently Selected
+                            </>
+                          ) : (
+                            'Click to select this word set'
+                          )}
+                        </Text>
+                      </Flex>
                     </Box>
                   </Button>
                 ))}
