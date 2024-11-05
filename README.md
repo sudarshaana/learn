@@ -22,8 +22,8 @@ A modern web application designed to help users improve their English spelling t
 
 ## ⌨️ Keyboard Shortcuts
 
-- `⌘/Ctrl + N`: Next word
-- `⌘/Ctrl + P`: Previous word
+- `⌘/Ctrl + ArrowRight`: Next word
+- `⌘/Ctrl + ArrowLeft`: Previous word
 - `⌘/Ctrl + O`: Show/Hide answer
 - `⌘/Ctrl + H`: View history
 - `⌘/Ctrl + L`: Listen to pronunciation
