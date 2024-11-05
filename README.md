@@ -2,7 +2,8 @@
 
 A modern web application designed to help users improve their English spelling through interactive practice. Built with React and Chakra UI, featuring a clean, dark-themed interface and comprehensive keyboard shortcuts.
 
-🌐 [Live Demo](https://sudarshaana.github.io/learn/)
+🌐 [Live Github Page](https://sudarshaana.github.io/learn/)
+🌐 [Live Website](https://vocab.smondal.me/)
 
 ## 🌟 Features
 
